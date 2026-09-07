@@ -1,24 +1,520 @@
 import { createFileRoute } from "@tanstack/react-router";
+import {
+  BookOpenCheck,
+  Building2,
+  CheckCircle2,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  CircleUserRound,
+  ClipboardPenLine,
+  CloudUpload,
+  GraduationCap,
+  Headphones,
+  Home,
+  IdCard,
+  Info,
+  Mail,
+  MapPin,
+  Megaphone,
+  MonitorCheck,
+  Phone,
+  Quote,
+  RefreshCw,
+  School,
+  Send,
+  ShieldCheck,
+  User,
+  UserRoundPlus,
+  UsersRound,
+} from "lucide-react";
+import { FormEvent, useState } from "react";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+import { Button } from "@/components/ui/button";
+import campusHero from "@/assets/ut-campus-hero.jpg";
+import saluteStudent from "@/assets/salute-student.png";
+
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Sentra Layanan UT Arek Malang" },
+      {
+        name: "description",
+        content:
+          "Landing page resmi Sentra Layanan UT Arek Malang untuk pendaftaran, alur layanan, kelebihan, testimoni, dan informasi kontak.",
+      },
+      { property: "og:title", content: "Sentra Layanan UT Arek Malang" },
+      {
+        property: "og:description",
+        content:
+          "Daftar dan dapatkan informasi pendaftaran Universitas Terbuka melalui Sentra Layanan UT Arek Malang.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
+const navLinks = ["Informasi", "Panduan", "Kontak"];
+
+const formFields = [
+  { label: "Nama Lengkap", icon: User, type: "text", name: "nama" },
+  { label: "Nama Sekolah", icon: School, type: "text", name: "sekolah" },
+  { label: "Asal Kota Sekolah", icon: MapPin, type: "text", name: "kota" },
+  { label: "Alamat Email", icon: Mail, type: "email", name: "email" },
+  { label: "Nomor HP", icon: Phone, type: "tel", name: "nomor" },
+];
+
+const processSteps = [
+  {
+    number: "1",
+    icon: ClipboardPenLine,
+    title: "Isi Formulir di Website",
+    body: (
+      <>
+        Kunjungi situs <strong>salutearekmalang.com</strong> lalu isi formulir pendaftaran secara lengkap dan benar.
+      </>
+    ),
+  },
+  {
+    number: "2",
+    icon: CheckCircle2,
+    title: "Pilih Jalur Pendaftaran",
+    badges: ["SIPAS", "Non SIPAS"],
+    body: (
+      <>
+        Tentukan jalur pendaftaran: <strong>SIPAS</strong> atau <strong>Non SIPAS</strong>, kemudian pilih jenis jalur: <strong>Reguler</strong> atau <strong>RPL</strong> (Rekognisi Pembelajaran Lampau).
+      </>
+    ),
+  },
+  {
+    number: "3",
+    icon: GraduationCap,
+    title: "Pilih Jurusan",
+    body: "Pilih jurusan sesuai dengan program studi yang Anda inginkan (seperti pada gambar di samping).",
+  },
+  {
+    number: "4",
+    icon: CloudUpload,
+    title: "Unggah Dokumen",
+    body: (
+      <>
+        Unggah dokumen persyaratan:
+        <br />• KTP
+        <br />• KK
+        <br />• Ijazah SMA/SMK
+        <br />• Legalisir Ijazah SMA/SMK
+        <br />• Transkrip Nilai SMA/SMK yang sudah dilegalisir.
+      </>
+    ),
+  },
+  {
+    number: "5",
+    icon: MonitorCheck,
+    title: "Verifikasi oleh Admin",
+    body: "Data dan dokumen Anda akan diverifikasi oleh admin. Jika semua sudah sesuai, proses akan dilanjutkan ke tahap akhir.",
+  },
+  {
+    number: "6",
+    icon: IdCard,
+    title: "Dapat Nomor Akun Pendaftaran",
+    body: (
+      <>
+        Setelah verifikasi selesai, Anda akan <strong>mendapatkan nomor akun pendaftaran</strong> melalui email atau nomor HP yang Anda daftarkan.
+      </>
+    ),
+  },
+];
+
+const benefits = [
+  {
+    icon: ShieldCheck,
+    title: "Layanan Pendaftaran Gratis",
+    description: "Calon mahasiswa dapat berkonsultasi dan dibantu mengisi pendaftaran tanpa biaya layanan tambahan.",
+  },
+  {
+    icon: BookOpenCheck,
+    title: "Pendampingan Akademik",
+    description: "Tim membantu memahami pilihan program studi, jalur pendaftaran, dan kebutuhan dokumen akademik.",
+  },
+  {
+    icon: Info,
+    title: "Informasi Cepat & Akurat",
+    description: "Setiap pertanyaan dijawab dengan arahan yang jelas agar proses pendaftaran berjalan lancar.",
+  },
+  {
+    icon: Headphones,
+    title: "Waktu & Tempat Fleksibel",
+    description: "Layanan mudah dijangkau dan ramah bagi calon mahasiswa yang memiliki aktivitas padat.",
+  },
+];
+
+const testimonials = [
+  {
+    quote:
+      "Proses daftar jadi lebih mudah karena semua dokumen dicek satu per satu. Saya tidak bingung memilih jalur kuliah yang sesuai.",
+    name: "Rizky Pratama",
+    status: "Mahasiswa Aktif",
+    initials: "RP",
+  },
+  {
+    quote:
+      "Salute Arek Malang membantu saya memahami sistem kuliah UT yang fleksibel. Informasinya cepat dan sangat jelas.",
+    name: "Dinda Maharani",
+    status: "Alumni",
+    initials: "DM",
+  },
+  {
+    quote:
+      "Adminnya responsif, ramah, dan sabar menjelaskan pilihan jurusan. Pendaftaran saya selesai tanpa kendala berarti.",
+    name: "Bagus Firmansyah",
+    status: "Mahasiswa Aktif",
+    initials: "BF",
+  },
+];
+
 function Index() {
+  const [selectedPath, setSelectedPath] = useState("Pilih Jalur Pendaftaran");
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+  };
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
+    <main className="min-h-screen overflow-hidden bg-background font-body text-foreground">
+      <Header />
+      <HeroRegistration
+        selectedPath={selectedPath}
+        setSelectedPath={setSelectedPath}
+        handleSubmit={handleSubmit}
       />
-    </div>
+      <RegistrationProcess />
+      <BenefitsSection />
+      <TestimonialsSection />
+      <FooterBanner />
+    </main>
+  );
+}
+
+function Header() {
+  return (
+    <header className="relative z-30 border-b border-ut-sky/25 bg-hero-nav text-hero-foreground shadow-header">
+      <div className="mx-auto grid min-h-18 w-full max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 py-3 md:min-h-20 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:px-8 lg:px-12">
+        <a href="#home" className="flex min-w-0 items-center gap-3" aria-label="Sentra Layanan UT Beranda">
+          <div className="grid size-11 shrink-0 place-items-center rounded-full border border-hero-foreground/70 bg-hero-foreground/10 md:size-12">
+            <Building2 className="size-7" aria-hidden="true" />
+          </div>
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="min-w-0 leading-none">
+              <p className="truncate text-sm font-black uppercase md:text-base">UNIVERSITAS</p>
+              <p className="truncate text-sm font-black uppercase md:text-base">TERBUKA</p>
+            </div>
+            <span className="hidden h-10 w-px shrink-0 bg-hero-foreground/70 sm:block" aria-hidden="true" />
+            <div className="hidden min-w-0 font-script text-3xl font-bold leading-none text-hero-foreground drop-shadow-title sm:block md:text-4xl">
+              Sentra Layanan
+              <span className="block font-display text-2xl font-black tracking-normal">UT</span>
+            </div>
+          </div>
+        </a>
+
+        <nav className="hidden items-center justify-center gap-4 md:flex lg:gap-9" aria-label="Navigasi utama">
+          <a href="#home" className="inline-flex items-center gap-2 rounded-full bg-ut-yellow px-5 py-2.5 text-sm font-black text-ut-navy shadow-yellow">
+            <Home className="size-4" aria-hidden="true" />
+            Beranda
+          </a>
+          {navLinks.map((link) => (
+            <a key={link} href={`#${link.toLowerCase()}`} className="text-sm font-bold text-hero-foreground/95 transition hover:text-ut-yellow">
+              {link}
+            </a>
+          ))}
+        </nav>
+
+        <div className="flex justify-end md:min-w-0">
+          <Button variant="heroOutline" size="pill" className="shrink-0 text-xs md:text-sm">
+            <CircleUserRound className="size-4" aria-hidden="true" />
+            Masuk / Daftar
+          </Button>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+function HeroRegistration({
+  selectedPath,
+  setSelectedPath,
+  handleSubmit,
+}: {
+  selectedPath: string;
+  setSelectedPath: (value: string) => void;
+  handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
+}) {
+  return (
+    <section id="home" className="relative bg-hero-deep text-hero-foreground">
+      <img
+        src={campusHero}
+        alt="Gedung kampus modern Sentra Layanan UT"
+        width={1600}
+        height={760}
+        className="absolute inset-0 h-full w-full object-cover object-center"
+      />
+      <div className="absolute inset-0 bg-hero-overlay" aria-hidden="true" />
+      <div className="absolute inset-y-0 left-0 hidden w-72 bg-side-stripes md:block" aria-hidden="true" />
+      <div className="pointer-events-none absolute -bottom-16 left-0 h-44 w-full bg-wave-white" aria-hidden="true" />
+
+      <div className="relative mx-auto grid min-h-[540px] max-w-7xl gap-8 px-4 py-8 md:grid-cols-[minmax(0,1fr)_22rem] md:px-8 md:py-5 lg:grid-cols-[minmax(0,1fr)_24rem] lg:px-12">
+        <div className="relative flex min-h-[430px] items-center pt-5 md:pt-0">
+          <Button variant="slider" size="icon" className="absolute left-0 top-1/2 z-20 hidden -translate-y-1/2 md:inline-flex" aria-label="Slide sebelumnya">
+            <ChevronLeft className="size-8" aria-hidden="true" />
+          </Button>
+
+          <div className="relative z-10 grid w-full gap-4 pl-0 md:pl-16 lg:grid-cols-[13rem_minmax(0,1fr)] lg:items-center lg:gap-4">
+            <div className="hidden h-[390px] self-end lg:flex lg:items-end lg:justify-center">
+              <img
+                src={saluteStudent}
+                alt="Mahasiswa Sentra Layanan UT mengenakan jas kuning"
+                width={720}
+                height={960}
+                className="h-full w-auto scale-110 object-contain drop-shadow-student"
+              />
+            </div>
+
+            <div className="max-w-3xl pt-6 lg:pt-0">
+              <div className="mb-6 flex flex-wrap items-center gap-3 text-hero-foreground/95">
+                <p className="font-script text-3xl font-bold leading-none drop-shadow-title md:text-4xl">Salute Arek Malang</p>
+                <SmallLogo label="UT" />
+                <SmallLogo label="MP" />
+                <SmallLogo label="DIKTISAINTEK BERDAMPAK" wide />
+              </div>
+
+              <h1 className="max-w-[52rem] origin-left font-display text-4xl font-black uppercase leading-[0.98] text-hero-foreground drop-shadow-title sm:text-5xl md:text-6xl lg:w-[132%] lg:scale-x-[0.78] lg:text-[3.3rem] xl:text-[3.45rem]">
+                SENTRA LAYANAN UNIVERSITAS TERBUKA ADA DI MPP MERDEKA MALANG LHO YUK KEPOIN !!!
+              </h1>
+              <div className="mt-5 h-2 w-72 max-w-full rounded-full bg-ut-yellow shadow-yellow" aria-hidden="true" />
+            </div>
+          </div>
+
+          <Button variant="slider" size="icon" className="absolute right-0 top-1/2 z-20 hidden -translate-y-1/2 md:inline-flex" aria-label="Slide berikutnya">
+            <ChevronRight className="size-8" aria-hidden="true" />
+          </Button>
+
+          <div className="absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 items-center gap-3 md:bottom-9" aria-hidden="true">
+            <span className="size-3 rounded-full bg-ut-yellow" />
+            <span className="size-3 rounded-full bg-hero-foreground" />
+            <span className="size-3 rounded-full bg-hero-foreground" />
+            <span className="size-3 rounded-full bg-hero-foreground" />
+          </div>
+        </div>
+
+        <RegistrationForm selectedPath={selectedPath} setSelectedPath={setSelectedPath} handleSubmit={handleSubmit} />
+      </div>
+    </section>
+  );
+}
+
+function SmallLogo({ label, wide = false }: { label: string; wide?: boolean }) {
+  return (
+    <span className={`inline-flex h-11 items-center justify-center rounded-full border border-hero-foreground/70 bg-hero-foreground/15 px-3 text-center text-xs font-black ${wide ? "min-w-32" : "min-w-11"}`}>
+      {label}
+    </span>
+  );
+}
+
+function RegistrationForm({
+  selectedPath,
+  setSelectedPath,
+  handleSubmit,
+}: {
+  selectedPath: string;
+  setSelectedPath: (value: string) => void;
+  handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
+}) {
+  return (
+    <aside className="relative z-20 self-start overflow-hidden rounded-2xl bg-card text-card-foreground shadow-form md:mt-4">
+      <div className="flex items-center gap-4 bg-form-header px-5 py-4 text-form-header-foreground">
+        <UserRoundPlus className="size-12 shrink-0 text-ut-yellow" aria-hidden="true" />
+        <h2 className="text-2xl font-black leading-tight">Pendaftaran Sentra Layanan UT</h2>
+      </div>
+      <form onSubmit={handleSubmit} className="space-y-3 px-5 py-4">
+        <p className="text-sm font-semibold leading-snug text-muted-foreground">
+          Silakan isi data diri Anda untuk melakukan pendaftaran layanan di Sentra Layanan Universitas Terbuka.
+        </p>
+        {formFields.map((field) => {
+          const Icon = field.icon;
+          return (
+            <label key={field.name} className="relative block">
+              <Icon className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-ut-navy" aria-hidden="true" />
+              <input
+                type={field.type}
+                name={field.name}
+                placeholder={field.label}
+                aria-label={field.label}
+                className="h-12 w-full rounded-xl border border-input bg-background pl-12 pr-4 text-sm font-semibold text-foreground outline-none transition placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/25"
+              />
+            </label>
+          );
+        })}
+        <label className="relative block">
+          <Megaphone className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-ut-navy" aria-hidden="true" />
+          <select
+            value={selectedPath}
+            onChange={(event) => setSelectedPath(event.target.value)}
+            aria-label="Jalur Pendaftaran"
+            className="h-12 w-full appearance-none rounded-xl border border-input bg-background pl-12 pr-10 text-sm font-black text-ut-navy outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/25"
+          >
+            <option>Pilih Jalur Pendaftaran</option>
+            <option>SIPAS</option>
+            <option>Non SIPAS</option>
+            <option>Reguler</option>
+            <option>RPL</option>
+          </select>
+          <ChevronDown className="pointer-events-none absolute right-4 top-1/2 size-5 -translate-y-1/2 text-ut-navy" aria-hidden="true" />
+          <span className="pointer-events-none absolute left-12 top-2 text-[0.62rem] font-bold text-muted-foreground">
+            Jalur Pendaftaran
+          </span>
+        </label>
+        <div className="grid grid-cols-2 gap-3 pt-1">
+          <Button type="submit" variant="utYellow" size="form">
+            <Send className="size-5" aria-hidden="true" />
+            Daftar
+          </Button>
+          <Button type="reset" variant="formOutline" size="form" onClick={() => setSelectedPath("Pilih Jalur Pendaftaran")}>
+            <RefreshCw className="size-5" aria-hidden="true" />
+            Clear Data
+          </Button>
+        </div>
+      </form>
+    </aside>
+  );
+}
+
+function RegistrationProcess() {
+  return (
+    <section id="panduan" className="relative bg-background px-4 pb-12 pt-8 md:px-8 lg:px-12">
+      <div className="absolute inset-x-0 top-0 h-28 bg-section-swoop" aria-hidden="true" />
+      <div className="relative mx-auto max-w-7xl">
+        <div className="mb-7 max-w-xl">
+          <div className="mb-2 h-1.5 w-20 rounded-full bg-ut-yellow" aria-hidden="true" />
+          <h2 className="font-display text-3xl font-black leading-none text-ut-navy md:text-4xl">
+            Alur Pendaftaran
+            <span className="block">Sentra Layanan UT</span>
+          </h2>
+          <div className="mt-3 h-1.5 w-64 max-w-full rounded-full bg-ut-yellow" aria-hidden="true" />
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-[repeat(6,minmax(0,1fr))] lg:gap-5">
+          {processSteps.map((step, index) => {
+            const Icon = step.icon;
+            return (
+              <div key={step.number} className="relative">
+                <article className="relative h-full rounded-xl border border-ut-sky/55 bg-card px-4 pb-4 pt-12 text-center shadow-step">
+                  <span className="absolute -left-1 -top-4 grid size-12 place-items-center rounded-full bg-ut-yellow text-2xl font-black text-ut-navy shadow-yellow">
+                    {step.number}
+                  </span>
+                  <Icon className="mx-auto mb-3 size-16 text-ut-blue" strokeWidth={1.8} aria-hidden="true" />
+                  {step.badges ? (
+                    <div className="mb-3 flex justify-center gap-2">
+                      {step.badges.map((badge) => (
+                        <span key={badge} className="inline-flex items-center gap-1 rounded-lg border border-ut-sky bg-background px-2 py-1 text-[0.62rem] font-black text-ut-blue">
+                          <CheckCircle2 className="size-3 text-ut-yellow" aria-hidden="true" />
+                          {badge}
+                        </span>
+                      ))}
+                    </div>
+                  ) : null}
+                  <h3 className="mb-2 text-base font-black leading-tight text-ut-navy">{step.title}</h3>
+                  <p className="text-xs font-medium leading-snug text-muted-foreground">{step.body}</p>
+                </article>
+                {index < processSteps.length - 1 ? (
+                  <ChevronRight className="absolute -right-4 top-1/2 z-10 hidden size-7 -translate-y-1/2 text-ut-blue lg:block" aria-hidden="true" />
+                ) : null}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function BenefitsSection() {
+  return (
+    <section id="informasi" className="bg-section-blue px-4 py-16 md:px-8 lg:px-12">
+      <div className="mx-auto max-w-7xl">
+        <h2 className="text-center font-display text-3xl font-black text-ut-navy md:text-4xl">
+          Kenapa Memilih Salute Arek Malang?
+        </h2>
+        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {benefits.map((benefit) => {
+            const Icon = benefit.icon;
+            return (
+              <article key={benefit.title} className="rounded-2xl bg-card p-6 text-center shadow-benefit transition duration-300 hover:-translate-y-1 hover:shadow-form">
+                <div className="mx-auto mb-5 grid size-16 place-items-center rounded-full bg-ut-yellow text-ut-navy shadow-yellow">
+                  <Icon className="size-8" aria-hidden="true" />
+                </div>
+                <h3 className="text-lg font-black text-ut-navy">{benefit.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{benefit.description}</p>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TestimonialsSection() {
+  return (
+    <section id="kontak" className="bg-background px-4 py-16 md:px-8 lg:px-12">
+      <div className="mx-auto max-w-7xl">
+        <h2 className="text-center font-display text-3xl font-black text-ut-navy md:text-4xl">Apa Kata Mereka?</h2>
+        <div className="mt-10 grid gap-6 md:grid-cols-3">
+          {testimonials.map((item) => (
+            <article key={item.name} className="rounded-2xl border border-border bg-card p-6 shadow-testimonial">
+              <Quote className="mb-4 size-10 fill-current text-ut-yellow" aria-hidden="true" />
+              <p className="min-h-28 text-sm italic leading-relaxed text-testimonial">“{item.quote}”</p>
+              <div className="mt-6 flex items-center gap-3">
+                <div className="grid size-12 shrink-0 place-items-center rounded-full bg-avatar text-sm font-black text-ut-navy">
+                  {item.initials}
+                </div>
+                <div className="min-w-0">
+                  <h3 className="truncate font-black text-ut-navy">{item.name}</h3>
+                  <span className={`mt-1 inline-flex rounded-full px-3 py-1 text-xs font-black ${item.status === "Alumni" ? "bg-ut-yellow text-ut-navy" : "bg-status-blue text-ut-blue"}`}>
+                    {item.status}
+                  </span>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FooterBanner() {
+  return (
+    <footer className="bg-footer-blue px-4 py-6 text-hero-foreground md:px-8 lg:px-12">
+      <div className="mx-auto grid max-w-7xl gap-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
+        <div className="flex flex-wrap items-center justify-center gap-4 md:justify-start">
+          <div className="grid size-14 place-items-center rounded-full bg-whatsapp text-whatsapp-foreground shadow-lg">
+            <Phone className="size-8" aria-hidden="true" />
+          </div>
+          <p className="text-xl font-black leading-tight">
+            Informasi
+            <span className="block">Pendaftaran</span>
+          </p>
+          <span className="hidden h-12 w-px bg-hero-foreground/70 sm:block" aria-hidden="true" />
+          <a href="tel:081230024264" className="rounded-full border-4 border-ut-sky bg-footer-pill px-6 py-2 text-2xl font-black tracking-normal text-hero-foreground shadow-inner md:text-3xl">
+            0812-3002-4264
+          </a>
+        </div>
+        <p className="text-center font-script text-3xl font-bold italic leading-none text-hero-foreground md:text-right md:text-4xl">
+          Kuliah Fleksibel
+          <span className="block">Raih Masa Depan</span>
+        </p>
+      </div>
+    </footer>
   );
 }

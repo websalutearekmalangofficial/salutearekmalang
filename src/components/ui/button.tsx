@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium cursor-pointer transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -16,12 +16,22 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        heroOutline:
+          "rounded-full border border-hero-foreground/80 bg-hero-foreground/5 text-hero-foreground shadow-none hover:bg-hero-foreground/15",
+        slider:
+          "rounded-full border-2 border-hero-foreground/75 bg-ut-blue/55 text-hero-foreground shadow-lg hover:bg-ut-blue",
+        utYellow:
+          "rounded-xl bg-ut-yellow font-black text-ut-navy shadow-yellow hover:bg-ut-yellow/90",
+        formOutline:
+          "rounded-xl border border-input bg-background font-black text-ut-navy shadow-sm hover:bg-secondary",
       },
       size: {
         default: "h-9 px-4 py-2",
         sm: "h-8 rounded-md px-3 text-xs",
         lg: "h-10 rounded-md px-8",
-        icon: "h-9 w-9",
+        icon: "size-11",
+        pill: "h-10 px-5 py-2",
+        form: "h-12 px-4 text-base",
       },
     },
     defaultVariants: {

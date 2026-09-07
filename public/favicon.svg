@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Sentra Layanan UT">
+  <rect width="64" height="64" rx="14" fill="#003B73"/>
+  <circle cx="22" cy="24" r="13" fill="none" stroke="#FFFFFF" stroke-width="4"/>
+  <path d="M9 24h26M22 11c5 7 5 19 0 26M22 11c-5 7-5 19 0 26" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+  <path d="M38 17h15M45.5 17v30M34 47h23" stroke="#FFD700" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
