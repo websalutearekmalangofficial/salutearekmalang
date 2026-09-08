@@ -77,11 +77,32 @@ function AuthPage() {
 
   const handleGoogle = async () => {
     try {
-      await lovable.auth.signInWithOAuth("google", {
+      const result = await lovable.auth.signInWithOAuth("google", {
         redirect_uri: window.location.origin + "/auth",
       });
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Masuk dengan Google gagal.");
+      if (result && "error" in result && result.error) {
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: "google",
+          options: {
+            redirectTo: window.location.origin + "/auth",
+          },
+        });
+        if (error) throw error;
+      }
+    } catch {
+      try {
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: "google",
+          options: {
+            redirectTo: window.location.origin + "/auth",
+          },
+        });
+        if (error) throw error;
+      } catch (fallbackError) {
+        toast.error(
+          fallbackError instanceof Error ? fallbackError.message : "Masuk dengan Google gagal.",
+        );
+      }
     }
   };
 
