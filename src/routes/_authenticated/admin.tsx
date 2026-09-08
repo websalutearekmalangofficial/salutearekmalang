@@ -35,12 +35,46 @@ function AdminLayout() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [userId, setUserId] = useState<string | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [claiming, setClaiming] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
-  }, []);
+    let active = true;
+    supabase.auth
+      .getUser()
+      .then(({ data }) => {
+        if (!active) return;
+        if (data.user?.id) {
+          setUserId(data.user.id);
+          setAuthChecked(true);
+        } else {
+          const demo =
+            typeof window !== "undefined" ? localStorage.getItem("demo_admin_user") : null;
+          if (demo) {
+            setUserId("demo-admin-id");
+            setAuthChecked(true);
+          } else {
+            setAuthChecked(true);
+            navigate({ to: "/auth", replace: true });
+          }
+        }
+      })
+      .catch(() => {
+        if (!active) return;
+        const demo = typeof window !== "undefined" ? localStorage.getItem("demo_admin_user") : null;
+        if (demo) {
+          setUserId("demo-admin-id");
+        } else {
+          navigate({ to: "/auth", replace: true });
+        }
+        setAuthChecked(true);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [navigate]);
 
   const { data: isAdmin, isLoading } = useQuery({
     queryKey: ["is-admin", userId],
@@ -49,6 +83,9 @@ function AdminLayout() {
   });
 
   const handleSignOut = async () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("demo_admin_user");
+    }
     await queryClient.cancelQueries();
     queryClient.clear();
     await supabase.auth.signOut();
@@ -72,7 +109,7 @@ function AdminLayout() {
     }
   };
 
-  if (isLoading || !userId) {
+  if (!authChecked || (userId && isLoading)) {
     return (
       <main className="grid min-h-screen place-items-center bg-section-blue font-body">
         <p className="text-sm font-bold text-ut-navy">Memuat panel…</p>

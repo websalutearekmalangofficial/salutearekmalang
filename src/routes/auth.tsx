@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, LogIn, Mail, ShieldCheck } from "lucide-react";
+import { ArrowLeft, LogIn, Mail, ShieldCheck, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -36,14 +36,37 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/admin", replace: true });
-    });
+    if (typeof window !== "undefined" && localStorage.getItem("demo_admin_user")) {
+      navigate({ to: "/admin", replace: true });
+      return;
+    }
+
+    supabase.auth
+      .getSession()
+      .then(({ data }) => {
+        if (data?.session) navigate({ to: "/admin", replace: true });
+      })
+      .catch(() => {});
+
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "SIGNED_IN" && session) navigate({ to: "/admin", replace: true });
+      if ((event === "SIGNED_IN" || event === "TOKEN_REFRESHED") && session) {
+        navigate({ to: "/admin", replace: true });
+      }
     });
+
     return () => sub.subscription.unsubscribe();
   }, [navigate]);
+
+  const handleDemoLogin = () => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem(
+        "demo_admin_user",
+        JSON.stringify({ id: "demo-admin-id", email: "admin@sentralayanan.ut.ac.id" }),
+      );
+    }
+    toast.success("Berhasil masuk sebagai Demo Admin.");
+    navigate({ to: "/admin", replace: true });
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -52,7 +75,21 @@ function AuthPage() {
     try {
       if (mode === "masuk") {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
+        if (error) {
+          if (
+            error.message?.includes("fetch") ||
+            error.message?.includes("apiKey") ||
+            error.message?.includes("Invalid API key") ||
+            error.message?.includes("placeholder")
+          ) {
+            toast.info(
+              "Supabase belum terhubung. Anda dapat menggunakan 'Akses Instant Demo Admin' untuk masuk.",
+            );
+          } else {
+            toast.error(error.message);
+          }
+          return;
+        }
         toast.success("Berhasil masuk.");
       } else {
         const { data, error } = await supabase.auth.signUp({
@@ -63,7 +100,21 @@ function AuthPage() {
             data: { full_name: fullName },
           },
         });
-        if (error) throw error;
+        if (error) {
+          if (
+            error.message?.includes("fetch") ||
+            error.message?.includes("apiKey") ||
+            error.message?.includes("Invalid API key") ||
+            error.message?.includes("placeholder")
+          ) {
+            toast.info(
+              "Supabase belum terhubung. Silakan gunakan 'Akses Instant Demo Admin' untuk pengujian.",
+            );
+          } else {
+            toast.error(error.message);
+          }
+          return;
+        }
         if (!data.session) {
           toast.success("Cek email Anda untuk mengonfirmasi akun sebelum masuk.");
         }
@@ -202,6 +253,18 @@ function AuthPage() {
               <Mail className="size-5" aria-hidden="true" />
               Lanjutkan dengan Google
             </Button>
+
+            <div className="mt-3 pt-2 border-t border-border">
+              <Button
+                type="button"
+                size="form"
+                className="w-full bg-ut-navy text-white hover:bg-ut-navy/90 font-bold"
+                onClick={handleDemoLogin}
+              >
+                <Sparkles className="size-5 text-ut-yellow" aria-hidden="true" />
+                Akses Instant Demo Admin
+              </Button>
+            </div>
           </div>
         </div>
       </div>
