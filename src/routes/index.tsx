@@ -15,6 +15,7 @@ import {
   IdCard,
   Info,
   Mail,
+  Menu,
   MapPin,
   Megaphone,
   MonitorCheck,
@@ -26,7 +27,7 @@ import {
   ShieldCheck,
   User,
   UserRoundPlus,
-  UsersRound,
+  X,
 } from "lucide-react";
 import { FormEvent, useState } from "react";
 
@@ -198,45 +199,86 @@ function Index() {
 }
 
 function Header() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
-    <header className="relative z-30 border-b border-ut-sky/25 bg-hero-nav text-hero-foreground shadow-header">
-      <div className="mx-auto grid min-h-18 w-full max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 py-3 md:min-h-20 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:px-8 lg:px-12">
-        <a href="#home" className="flex min-w-0 items-center gap-3" aria-label="Sentra Layanan UT Beranda">
-          <div className="grid size-11 shrink-0 place-items-center rounded-full border border-hero-foreground/70 bg-hero-foreground/10 md:size-12">
-            <Building2 className="size-7" aria-hidden="true" />
+    <header className="sticky top-0 z-40 border-b border-ut-sky/25 bg-hero-nav text-hero-foreground shadow-header">
+      <div className="mx-auto grid min-h-16 w-full max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-4 py-2.5 sm:gap-3 sm:py-3 md:min-h-20 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:px-8 lg:px-12">
+        <a href="#home" className="flex min-w-0 items-center gap-2.5 sm:gap-3" aria-label="Sentra Layanan UT Beranda">
+          <div className="grid size-10 shrink-0 place-items-center rounded-full border border-hero-foreground/70 bg-hero-foreground/10 sm:size-11 md:size-12">
+            <Building2 className="size-6 sm:size-7" aria-hidden="true" />
           </div>
-          <div className="flex min-w-0 items-center gap-3">
+          <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
             <div className="min-w-0 leading-none">
-              <p className="truncate text-sm font-black uppercase md:text-base">UNIVERSITAS</p>
-              <p className="truncate text-sm font-black uppercase md:text-base">TERBUKA</p>
+              <p className="truncate text-xs font-black uppercase sm:text-sm md:text-base">UNIVERSITAS</p>
+              <p className="truncate text-xs font-black uppercase sm:text-sm md:text-base">TERBUKA</p>
             </div>
             <span className="hidden h-10 w-px shrink-0 bg-hero-foreground/70 sm:block" aria-hidden="true" />
-            <div className="hidden min-w-0 font-script text-3xl font-bold leading-none text-hero-foreground drop-shadow-title sm:block md:text-4xl">
+            <div className="hidden min-w-0 font-script text-2xl font-bold leading-none text-hero-foreground drop-shadow-title sm:block md:text-4xl">
               Sentra Layanan
-              <span className="block font-display text-2xl font-black tracking-normal">UT</span>
+              <span className="block font-display text-xl font-black tracking-normal md:text-2xl">UT</span>
             </div>
           </div>
         </a>
 
-        <nav className="hidden items-center justify-center gap-4 md:flex lg:gap-9" aria-label="Navigasi utama">
-          <a href="#home" className="inline-flex items-center gap-2 rounded-full bg-ut-yellow px-5 py-2.5 text-sm font-black text-ut-navy shadow-yellow">
+        <nav className="hidden items-center justify-center gap-3 md:flex lg:gap-9" aria-label="Navigasi utama">
+          <a href="#home" className="inline-flex items-center gap-2 rounded-full bg-ut-yellow px-4 py-2.5 text-sm font-black text-ut-navy shadow-yellow lg:px-5">
             <Home className="size-4" aria-hidden="true" />
             Beranda
           </a>
           {navLinks.map((link) => (
-            <a key={link} href={`#${link.toLowerCase()}`} className="text-sm font-bold text-hero-foreground/95 transition hover:text-ut-yellow">
+            <a key={link} href={`#${link.toLowerCase()}`} className="rounded-full px-2 py-1 text-sm font-bold text-hero-foreground/95 transition hover:text-ut-yellow focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ut-yellow">
               {link}
             </a>
           ))}
         </nav>
 
-        <div className="flex justify-end md:min-w-0">
-          <Button variant="heroOutline" size="pill" className="shrink-0 text-xs md:text-sm">
+        <div className="flex items-center justify-end gap-2 md:min-w-0">
+          <Button variant="heroOutline" size="pill" className="shrink-0 px-3 text-[0.7rem] sm:px-4 sm:text-xs md:text-sm">
             <CircleUserRound className="size-4" aria-hidden="true" />
-            Masuk / Daftar
+            <span className="hidden sm:inline">Masuk / Daftar</span>
+            <span className="sm:hidden">Masuk</span>
           </Button>
+          <button
+            type="button"
+            onClick={() => setMenuOpen((open) => !open)}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-nav"
+            aria-label={menuOpen ? "Tutup menu navigasi" : "Buka menu navigasi"}
+            className="grid size-10 shrink-0 place-items-center rounded-full border border-hero-foreground/60 bg-hero-foreground/10 transition hover:bg-hero-foreground/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ut-yellow md:hidden"
+          >
+            {menuOpen ? <X className="size-5" aria-hidden="true" /> : <Menu className="size-5" aria-hidden="true" />}
+          </button>
         </div>
       </div>
+
+      {menuOpen ? (
+        <nav id="mobile-nav" className="border-t border-hero-foreground/20 px-4 pb-4 pt-3 md:hidden" aria-label="Navigasi mobile">
+          <ul className="grid gap-2">
+            <li>
+              <a
+                href="#home"
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center gap-2 rounded-xl bg-ut-yellow px-4 py-3 text-sm font-black text-ut-navy"
+              >
+                <Home className="size-4" aria-hidden="true" />
+                Beranda
+              </a>
+            </li>
+            {navLinks.map((link) => (
+              <li key={link}>
+                <a
+                  href={`#${link.toLowerCase()}`}
+                  onClick={() => setMenuOpen(false)}
+                  className="block rounded-xl bg-hero-foreground/10 px-4 py-3 text-sm font-bold text-hero-foreground transition hover:bg-hero-foreground/20"
+                >
+                  {link}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      ) : null}
     </header>
   );
 }
@@ -251,7 +293,7 @@ function HeroRegistration({
   handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
 }) {
   return (
-    <section id="home" className="relative bg-hero-deep text-hero-foreground">
+    <section id="home" className="relative scroll-mt-20 bg-hero-deep text-hero-foreground">
       <img
         src={campusHero}
         alt="Gedung kampus modern Sentra Layanan UT"
@@ -260,16 +302,16 @@ function HeroRegistration({
         className="absolute inset-0 h-full w-full object-cover object-center"
       />
       <div className="absolute inset-0 bg-hero-overlay" aria-hidden="true" />
-      <div className="absolute inset-y-0 left-0 hidden w-72 bg-side-stripes md:block" aria-hidden="true" />
+      <div className="absolute inset-y-0 left-0 hidden w-72 bg-side-stripes lg:block" aria-hidden="true" />
       <div className="pointer-events-none absolute -bottom-16 left-0 h-44 w-full bg-wave-white" aria-hidden="true" />
 
-      <div className="relative mx-auto grid min-h-[540px] max-w-7xl gap-8 px-4 py-8 md:grid-cols-[minmax(0,1fr)_22rem] md:px-8 md:py-5 lg:grid-cols-[minmax(0,1fr)_24rem] lg:px-12">
-        <div className="relative flex min-h-[430px] items-center pt-5 md:pt-0">
-          <Button variant="slider" size="icon" className="absolute left-0 top-1/2 z-20 hidden -translate-y-1/2 md:inline-flex" aria-label="Slide sebelumnya">
+      <div className="relative mx-auto grid max-w-7xl gap-8 px-4 py-8 sm:px-6 md:gap-10 md:px-8 md:py-12 lg:min-h-[540px] lg:grid-cols-[minmax(0,1fr)_23rem] lg:gap-8 lg:px-12 lg:py-6 xl:grid-cols-[minmax(0,1fr)_25rem]">
+        <div className="relative flex items-center pb-10 pt-2 sm:pb-12 lg:min-h-[430px] lg:pt-0">
+          <Button variant="slider" size="icon" className="absolute left-0 top-1/2 z-20 hidden -translate-y-1/2 lg:inline-flex" aria-label="Slide sebelumnya">
             <ChevronLeft className="size-8" aria-hidden="true" />
           </Button>
 
-          <div className="relative z-10 grid w-full gap-4 pl-0 md:pl-16 lg:grid-cols-[13rem_minmax(0,1fr)] lg:items-center lg:gap-4">
+          <div className="relative z-10 grid w-full gap-4 pl-0 lg:grid-cols-[12rem_minmax(0,1fr)] lg:items-center lg:gap-4 lg:pl-16">
             <div className="hidden h-[390px] self-end lg:flex lg:items-end lg:justify-center">
               <img
                 src={saluteStudent}
@@ -280,30 +322,30 @@ function HeroRegistration({
               />
             </div>
 
-            <div className="max-w-3xl pt-6 lg:pt-0">
-              <div className="mb-6 flex flex-wrap items-center gap-3 text-hero-foreground/95">
-                <p className="font-script text-3xl font-bold leading-none drop-shadow-title md:text-4xl">Salute Arek Malang</p>
+            <div className="max-w-3xl">
+              <div className="mb-5 flex flex-wrap items-center gap-2.5 text-hero-foreground/95 sm:gap-3 md:mb-6">
+                <p className="font-script text-2xl font-bold leading-none drop-shadow-title sm:text-3xl md:text-4xl">Salute Arek Malang</p>
                 <SmallLogo label="UT" />
                 <SmallLogo label="MP" />
                 <SmallLogo label="DIKTISAINTEK BERDAMPAK" wide />
               </div>
 
-              <h1 className="max-w-[52rem] origin-left font-display text-4xl font-black uppercase leading-[0.98] text-hero-foreground drop-shadow-title sm:text-5xl md:text-6xl lg:w-[132%] lg:scale-x-[0.78] lg:text-[3.3rem] xl:text-[3.45rem]">
+              <h1 className="max-w-[52rem] origin-left font-display text-[1.9rem] font-black uppercase leading-[1.02] text-hero-foreground drop-shadow-title sm:text-4xl md:text-5xl lg:w-[132%] lg:scale-x-[0.78] lg:text-[3.3rem] lg:leading-[0.98] xl:text-[3.45rem]">
                 SENTRA LAYANAN UNIVERSITAS TERBUKA ADA DI MPP MERDEKA MALANG LHO YUK KEPOIN !!!
               </h1>
-              <div className="mt-5 h-2 w-72 max-w-full rounded-full bg-ut-yellow shadow-yellow" aria-hidden="true" />
+              <div className="mt-4 h-2 w-52 max-w-full rounded-full bg-ut-yellow shadow-yellow sm:w-72 md:mt-5" aria-hidden="true" />
             </div>
           </div>
 
-          <Button variant="slider" size="icon" className="absolute right-0 top-1/2 z-20 hidden -translate-y-1/2 md:inline-flex" aria-label="Slide berikutnya">
+          <Button variant="slider" size="icon" className="absolute right-0 top-1/2 z-20 hidden -translate-y-1/2 lg:inline-flex" aria-label="Slide berikutnya">
             <ChevronRight className="size-8" aria-hidden="true" />
           </Button>
 
-          <div className="absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 items-center gap-3 md:bottom-9" aria-hidden="true">
-            <span className="size-3 rounded-full bg-ut-yellow" />
-            <span className="size-3 rounded-full bg-hero-foreground" />
-            <span className="size-3 rounded-full bg-hero-foreground" />
-            <span className="size-3 rounded-full bg-hero-foreground" />
+          <div className="absolute bottom-2 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2.5 sm:bottom-3 sm:gap-3 lg:bottom-9" aria-hidden="true">
+            <span className="size-2.5 rounded-full bg-ut-yellow sm:size-3" />
+            <span className="size-2.5 rounded-full bg-hero-foreground/80 sm:size-3" />
+            <span className="size-2.5 rounded-full bg-hero-foreground/80 sm:size-3" />
+            <span className="size-2.5 rounded-full bg-hero-foreground/80 sm:size-3" />
           </div>
         </div>
 
@@ -315,7 +357,7 @@ function HeroRegistration({
 
 function SmallLogo({ label, wide = false }: { label: string; wide?: boolean }) {
   return (
-    <span className={`inline-flex h-11 items-center justify-center rounded-full border border-hero-foreground/70 bg-hero-foreground/15 px-3 text-center text-xs font-black ${wide ? "min-w-32" : "min-w-11"}`}>
+    <span className={`inline-flex h-9 items-center justify-center rounded-full border border-hero-foreground/70 bg-hero-foreground/15 px-2.5 text-center text-[0.6rem] font-black leading-tight sm:h-11 sm:px-3 sm:text-xs ${wide ? "min-w-24 sm:min-w-32" : "min-w-9 sm:min-w-11"}`}>
       {label}
     </span>
   );
@@ -331,12 +373,12 @@ function RegistrationForm({
   handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
 }) {
   return (
-    <aside className="relative z-20 self-start overflow-hidden rounded-2xl bg-card text-card-foreground shadow-form md:mt-4">
-      <div className="flex items-center gap-4 bg-form-header px-5 py-4 text-form-header-foreground">
-        <UserRoundPlus className="size-12 shrink-0 text-ut-yellow" aria-hidden="true" />
-        <h2 className="text-2xl font-black leading-tight">Pendaftaran Sentra Layanan UT</h2>
+    <aside className="relative z-20 mx-auto w-full max-w-md self-start overflow-hidden rounded-2xl bg-card text-card-foreground shadow-form lg:mx-0 lg:max-w-none lg:mt-4">
+      <div className="flex items-center gap-3 bg-form-header px-4 py-4 text-form-header-foreground sm:gap-4 sm:px-5">
+        <UserRoundPlus className="size-10 shrink-0 text-ut-yellow sm:size-12" aria-hidden="true" />
+        <h2 className="text-xl font-black leading-tight sm:text-2xl">Pendaftaran Sentra Layanan UT</h2>
       </div>
-      <form onSubmit={handleSubmit} className="space-y-3 px-5 py-4">
+      <form onSubmit={handleSubmit} className="space-y-3 px-4 py-4 sm:px-5">
         <p className="text-sm font-semibold leading-snug text-muted-foreground">
           Silakan isi data diri Anda untuk melakukan pendaftaran layanan di Sentra Layanan Universitas Terbuka.
         </p>
@@ -350,7 +392,7 @@ function RegistrationForm({
                 name={field.name}
                 placeholder={field.label}
                 aria-label={field.label}
-                className="h-12 w-full rounded-xl border border-input bg-background pl-12 pr-4 text-sm font-semibold text-foreground outline-none transition placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/25"
+                className="h-12 w-full rounded-xl border border-input bg-background pl-12 pr-4 text-base font-semibold sm:text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/25"
               />
             </label>
           );
@@ -361,7 +403,7 @@ function RegistrationForm({
             value={selectedPath}
             onChange={(event) => setSelectedPath(event.target.value)}
             aria-label="Jalur Pendaftaran"
-            className="h-12 w-full appearance-none rounded-xl border border-input bg-background pl-12 pr-10 text-sm font-black text-ut-navy outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/25"
+            className="h-12 w-full appearance-none rounded-xl border border-input bg-background pl-12 pr-10 text-base font-black sm:text-sm text-ut-navy outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/25"
           >
             <option>Pilih Jalur Pendaftaran</option>
             <option>SIPAS</option>
@@ -374,7 +416,7 @@ function RegistrationForm({
             Jalur Pendaftaran
           </span>
         </label>
-        <div className="grid grid-cols-2 gap-3 pt-1">
+        <div className="grid grid-cols-1 gap-3 pt-1 sm:grid-cols-2">
           <Button type="submit" variant="utYellow" size="form">
             <Send className="size-5" aria-hidden="true" />
             Daftar
@@ -391,28 +433,28 @@ function RegistrationForm({
 
 function RegistrationProcess() {
   return (
-    <section id="panduan" className="relative bg-background px-4 pb-12 pt-8 md:px-8 lg:px-12">
+    <section id="panduan" className="relative scroll-mt-20 bg-background px-4 pb-12 pt-10 sm:px-6 md:px-8 md:pt-12 lg:px-12">
       <div className="absolute inset-x-0 top-0 h-28 bg-section-swoop" aria-hidden="true" />
       <div className="relative mx-auto max-w-7xl">
-        <div className="mb-7 max-w-xl">
+        <div className="mb-8 max-w-xl md:mb-10">
           <div className="mb-2 h-1.5 w-20 rounded-full bg-ut-yellow" aria-hidden="true" />
-          <h2 className="font-display text-3xl font-black leading-none text-ut-navy md:text-4xl">
+          <h2 className="font-display text-2xl font-black leading-tight text-ut-navy sm:text-3xl md:text-4xl">
             Alur Pendaftaran
             <span className="block">Sentra Layanan UT</span>
           </h2>
           <div className="mt-3 h-1.5 w-64 max-w-full rounded-full bg-ut-yellow" aria-hidden="true" />
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-[repeat(6,minmax(0,1fr))] lg:gap-5">
+        <div className="grid gap-x-4 gap-y-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-[repeat(6,minmax(0,1fr))] lg:gap-x-5">
           {processSteps.map((step, index) => {
             const Icon = step.icon;
             return (
               <div key={step.number} className="relative">
-                <article className="relative h-full rounded-xl border border-ut-sky/55 bg-card px-4 pb-4 pt-12 text-center shadow-step">
-                  <span className="absolute -left-1 -top-4 grid size-12 place-items-center rounded-full bg-ut-yellow text-2xl font-black text-ut-navy shadow-yellow">
+                <article className="relative h-full rounded-xl border border-ut-sky/55 bg-card px-4 pb-5 pt-10 text-center shadow-step transition duration-300 hover:-translate-y-1 hover:shadow-form sm:pt-12">
+                  <span className="absolute -top-4 left-1/2 grid size-11 -translate-x-1/2 place-items-center rounded-full bg-ut-yellow text-xl font-black text-ut-navy shadow-yellow sm:size-12 sm:text-2xl lg:-left-1 lg:translate-x-0">
                     {step.number}
                   </span>
-                  <Icon className="mx-auto mb-3 size-16 text-ut-blue" strokeWidth={1.8} aria-hidden="true" />
+                  <Icon className="mx-auto mb-3 size-12 text-ut-blue sm:size-16" strokeWidth={1.8} aria-hidden="true" />
                   {step.badges ? (
                     <div className="mb-3 flex justify-center gap-2">
                       {step.badges.map((badge) => (
@@ -423,8 +465,8 @@ function RegistrationProcess() {
                       ))}
                     </div>
                   ) : null}
-                  <h3 className="mb-2 text-base font-black leading-tight text-ut-navy">{step.title}</h3>
-                  <p className="text-xs font-medium leading-snug text-muted-foreground">{step.body}</p>
+                  <h3 className="mb-2 text-sm font-black leading-tight text-ut-navy sm:text-base">{step.title}</h3>
+                  <p className="text-xs font-medium leading-relaxed text-muted-foreground">{step.body}</p>
                 </article>
                 {index < processSteps.length - 1 ? (
                   <ChevronRight className="absolute -right-4 top-1/2 z-10 hidden size-7 -translate-y-1/2 text-ut-blue lg:block" aria-hidden="true" />
@@ -440,21 +482,21 @@ function RegistrationProcess() {
 
 function BenefitsSection() {
   return (
-    <section id="informasi" className="bg-section-blue px-4 py-16 md:px-8 lg:px-12">
+    <section id="informasi" className="scroll-mt-20 bg-section-blue px-4 py-12 sm:px-6 md:px-8 md:py-16 lg:px-12">
       <div className="mx-auto max-w-7xl">
-        <h2 className="text-center font-display text-3xl font-black text-ut-navy md:text-4xl">
+        <h2 className="text-center font-display text-2xl font-black leading-tight text-ut-navy sm:text-3xl md:text-4xl">
           Kenapa Memilih Salute Arek Malang?
         </h2>
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 md:gap-5 lg:grid-cols-4 md:mt-10">
           {benefits.map((benefit) => {
             const Icon = benefit.icon;
             return (
-              <article key={benefit.title} className="rounded-2xl bg-card p-6 text-center shadow-benefit transition duration-300 hover:-translate-y-1 hover:shadow-form">
-                <div className="mx-auto mb-5 grid size-16 place-items-center rounded-full bg-ut-yellow text-ut-navy shadow-yellow">
-                  <Icon className="size-8" aria-hidden="true" />
+              <article key={benefit.title} className="rounded-2xl bg-card p-5 text-center shadow-benefit sm:p-6 transition duration-300 hover:-translate-y-1 hover:shadow-form">
+                <div className="mx-auto mb-4 grid size-14 place-items-center sm:mb-5 sm:size-16 rounded-full bg-ut-yellow text-ut-navy shadow-yellow">
+                  <Icon className="size-7 sm:size-8" aria-hidden="true" />
                 </div>
-                <h3 className="text-lg font-black text-ut-navy">{benefit.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{benefit.description}</p>
+                <h3 className="text-base font-black leading-tight text-ut-navy sm:text-lg">{benefit.title}</h3>
+                <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground sm:mt-3">{benefit.description}</p>
               </article>
             );
           })}
@@ -466,20 +508,20 @@ function BenefitsSection() {
 
 function TestimonialsSection() {
   return (
-    <section id="kontak" className="bg-background px-4 py-16 md:px-8 lg:px-12">
+    <section id="kontak" className="scroll-mt-20 bg-background px-4 py-12 sm:px-6 md:px-8 md:py-16 lg:px-12">
       <div className="mx-auto max-w-7xl">
-        <h2 className="text-center font-display text-3xl font-black text-ut-navy md:text-4xl">Apa Kata Mereka?</h2>
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
+        <h2 className="text-center font-display text-2xl font-black text-ut-navy sm:text-3xl md:text-4xl">Apa Kata Mereka?</h2>
+        <div className="mt-8 grid gap-5 sm:grid-cols-2 md:mt-10 md:gap-6 lg:grid-cols-3">
           {testimonials.map((item) => (
-            <article key={item.name} className="rounded-2xl border border-border bg-card p-6 shadow-testimonial">
-              <Quote className="mb-4 size-10 fill-current text-ut-yellow" aria-hidden="true" />
-              <p className="min-h-28 text-sm italic leading-relaxed text-testimonial">“{item.quote}”</p>
-              <div className="mt-6 flex items-center gap-3">
+            <article key={item.name} className="flex h-full flex-col rounded-2xl border border-border bg-card p-5 shadow-testimonial transition duration-300 hover:-translate-y-1 hover:shadow-form sm:p-6">
+              <Quote className="mb-3 size-8 fill-current text-ut-yellow sm:mb-4 sm:size-10" aria-hidden="true" />
+              <p className="flex-1 text-sm italic leading-relaxed text-testimonial">“{item.quote}”</p>
+              <div className="mt-5 flex items-center gap-3 sm:mt-6">
                 <div className="grid size-12 shrink-0 place-items-center rounded-full bg-avatar text-sm font-black text-ut-navy">
                   {item.initials}
                 </div>
                 <div className="min-w-0">
-                  <h3 className="truncate font-black text-ut-navy">{item.name}</h3>
+                  <h3 className="truncate text-sm font-black text-ut-navy sm:text-base">{item.name}</h3>
                   <span className={`mt-1 inline-flex rounded-full px-3 py-1 text-xs font-black ${item.status === "Alumni" ? "bg-ut-yellow text-ut-navy" : "bg-status-blue text-ut-blue"}`}>
                     {item.status}
                   </span>
@@ -495,22 +537,22 @@ function TestimonialsSection() {
 
 function FooterBanner() {
   return (
-    <footer className="bg-footer-blue px-4 py-6 text-hero-foreground md:px-8 lg:px-12">
-      <div className="mx-auto grid max-w-7xl gap-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
-        <div className="flex flex-wrap items-center justify-center gap-4 md:justify-start">
-          <div className="grid size-14 place-items-center rounded-full bg-whatsapp text-whatsapp-foreground shadow-lg">
-            <Phone className="size-8" aria-hidden="true" />
+    <footer className="bg-footer-blue px-4 py-6 text-hero-foreground sm:px-6 md:px-8 md:py-7 lg:px-12">
+      <div className="mx-auto grid max-w-7xl gap-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-8">
+        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 md:justify-start">
+          <div className="grid size-12 shrink-0 place-items-center rounded-full bg-whatsapp text-whatsapp-foreground shadow-lg sm:size-14">
+            <Phone className="size-6 sm:size-8" aria-hidden="true" />
           </div>
-          <p className="text-xl font-black leading-tight">
+          <p className="text-lg font-black leading-tight sm:text-xl">
             Informasi
             <span className="block">Pendaftaran</span>
           </p>
           <span className="hidden h-12 w-px bg-hero-foreground/70 sm:block" aria-hidden="true" />
-          <a href="tel:081230024264" className="rounded-full border-4 border-ut-sky bg-footer-pill px-6 py-2 text-2xl font-black tracking-normal text-hero-foreground shadow-inner md:text-3xl">
+          <a href="tel:081230024264" className="rounded-full border-4 border-ut-sky bg-footer-pill px-4 py-2 text-lg font-black tracking-normal text-hero-foreground shadow-inner transition hover:bg-ut-sky/30 sm:px-6 sm:text-2xl md:text-3xl">
             0812-3002-4264
           </a>
         </div>
-        <p className="text-center font-script text-3xl font-bold italic leading-none text-hero-foreground md:text-right md:text-4xl">
+        <p className="text-center font-script text-2xl font-bold italic leading-tight text-hero-foreground sm:text-3xl md:text-right md:text-4xl">
           Kuliah Fleksibel
           <span className="block">Raih Masa Depan</span>
         </p>
