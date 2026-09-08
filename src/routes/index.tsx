@@ -34,6 +34,15 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import campusHero from "@/assets/ut-campus-hero.jpg";
 import saluteStudent from "@/assets/salute-student.png";
 
@@ -188,6 +197,7 @@ const testimonials = [
 function Index() {
   const [selectedPath, setSelectedPath] = useState("Pilih Jalur Pendaftaran");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -225,7 +235,7 @@ function Index() {
       console.error(error);
       toast.error("Gagal mengirim data. Silakan coba lagi nanti.");
     } else {
-      toast.success("Pendaftaran berhasil dikirim! Tim kami akan menghubungi Anda segera.");
+      setIsSuccessDialogOpen(true);
       event.currentTarget.reset();
       setSelectedPath("Pilih Jalur Pendaftaran");
     }
@@ -246,6 +256,31 @@ function Index() {
       <BenefitsSection />
       <TestimonialsSection />
       <FooterBanner />
+
+      <AlertDialog open={isSuccessDialogOpen} onOpenChange={setIsSuccessDialogOpen}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-green-100 text-green-600">
+              <CheckCircle2 className="size-8" />
+            </div>
+            <AlertDialogTitle className="text-center text-2xl font-bold">
+              Pendaftaran Berhasil!
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center text-base">
+              Terima kasih telah mendaftar. Data Anda telah kami terima, dan tim Sentra Layanan UT
+              akan segera menghubungi Anda untuk proses selanjutnya.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="sm:justify-center">
+            <AlertDialogAction
+              onClick={() => setIsSuccessDialogOpen(false)}
+              className="w-full sm:w-auto px-8"
+            >
+              Tutup
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </main>
   );
 }
