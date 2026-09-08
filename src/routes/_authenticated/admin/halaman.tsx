@@ -164,6 +164,7 @@ function PageForm({ page, onSaved }: { page: PageRecord; onSaved: () => void }) 
         .update({
           slug: form.slug.trim(),
           title: form.title.trim(),
+          content: form.content,
           meta_title: form.meta_title,
           meta_description: form.meta_description,
           nav_label: form.nav_label,
@@ -210,6 +211,17 @@ function PageForm({ page, onSaved }: { page: PageRecord; onSaved: () => void }) 
             onChange={(e) => setForm({ ...form, slug: e.target.value })}
           />
         </Field>
+        <div className="sm:col-span-2">
+          <Field label="Konten Halaman (Rich Text)">
+            <textarea
+              className={textareaClass}
+              rows={8}
+              value={form.content ?? ""}
+              onChange={(e) => setForm({ ...form, content: e.target.value })}
+              placeholder="Tuliskan isi halaman di sini..."
+            />
+          </Field>
+        </div>
         <Field label="Judul untuk mesin pencari">
           <input
             className={inputClass}

@@ -141,6 +141,7 @@ export type PageRecord = {
   id: string;
   slug: string;
   title: string;
+  content: string | null;
   meta_title: string | null;
   meta_description: string | null;
   nav_label: string | null;

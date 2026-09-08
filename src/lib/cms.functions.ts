@@ -6,8 +6,10 @@ import type { Database } from "@/integrations/supabase/types";
 import type { NavItem, PageContent, Section, SectionConfig, SectionItem } from "@/lib/cms";
 
 function createPublicClient() {
-  const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
-  const url = process.env["SUPABASE_URL"]!;
+  const key =
+    process.env["SUPABASE_PUBLISHABLE_KEY"] ||
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSJ9.dummy";
+  const url = process.env["SUPABASE_URL"] || "https://placeholder-project.supabase.co";
 
   return createClient<Database>(url, key, {
     auth: { storage: undefined, persistSession: false, autoRefreshToken: false },

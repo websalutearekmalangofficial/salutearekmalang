@@ -95,6 +95,7 @@ export type Database = {
           show_in_nav: boolean;
           slug: string;
           title: string;
+          content: string | null;
           updated_at: string;
         };
         Insert: {
@@ -108,6 +109,7 @@ export type Database = {
           show_in_nav?: boolean;
           slug: string;
           title: string;
+          content: string | null;
           updated_at?: string;
         };
         Update: {
@@ -121,6 +123,7 @@ export type Database = {
           show_in_nav?: boolean;
           slug?: string;
           title?: string;
+          content?: string | null;
           updated_at?: string;
         };
         Relationships: [];
