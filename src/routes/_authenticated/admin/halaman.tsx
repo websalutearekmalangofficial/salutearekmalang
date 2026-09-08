@@ -59,7 +59,7 @@ function PagesAdmin() {
     mutationFn: async () => {
       const nextOrder = (sectionsQuery.data?.length ?? 0) + 1;
       const { error } = await supabase.from("sections").insert({
-        page_id: selectedPageId,
+        page_id: selectedPageId!,
         kind: "richtext",
         sort_order: nextOrder,
         title: "Section Baru",
@@ -254,7 +254,7 @@ function SectionEditor({
           document_url: form.document_url,
           link_url: form.link_url,
           link_label: form.link_label,
-          config: form.config,
+          config: form.config as Record<string, string | number | boolean | null>,
           is_published: form.is_published,
         })
         .eq("id", section.id);

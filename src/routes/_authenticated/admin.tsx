@@ -25,10 +25,10 @@ export const Route = createFileRoute("/_authenticated/admin")({
 
 const menu = [
   { to: "/admin", label: "Ringkasan", icon: LayoutDashboard, exact: true },
-  { to: "/admin/halaman", label: "Halaman & Section", icon: ListOrdered },
-  { to: "/admin/navigasi", label: "Menu Navigasi", icon: Menu },
-  { to: "/admin/media", label: "Media", icon: Images },
-  { to: "/admin/pendaftar", label: "Data Pendaftar", icon: Users },
+  { to: "/admin/halaman", label: "Halaman & Section", icon: ListOrdered, exact: false },
+  { to: "/admin/navigasi", label: "Menu Navigasi", icon: Menu, exact: false },
+  { to: "/admin/media", label: "Media", icon: Images, exact: false },
+  { to: "/admin/pendaftar", label: "Data Pendaftar", icon: Users, exact: false },
 ] as const;
 
 function AdminLayout() {
@@ -148,7 +148,7 @@ function AdminLayout() {
               <Link
                 key={item.to}
                 to={item.to}
-                activeOptions={{ exact: item.exact ?? false }}
+                activeOptions={{ exact: item.exact }}
                 onClick={() => setSidebarOpen(false)}
                 className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-bold text-ut-navy transition hover:bg-section-blue [&.active]:bg-ut-yellow [&.active]:shadow-yellow"
               >

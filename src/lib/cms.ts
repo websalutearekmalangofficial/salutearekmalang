@@ -97,6 +97,9 @@ export const registrationStatuses = [
   { value: "ditolak", label: "Ditolak" },
 ] as const;
 
+/** Nilai bebas pada config section, dibatasi agar aman dikirim dari server. */
+export type SectionConfig = Record<string, string | number | boolean | null>;
+
 export type SectionItem = {
   id: string;
   section_id: string;
@@ -129,7 +132,7 @@ export type Section = {
   document_url: string | null;
   link_url: string | null;
   link_label: string | null;
-  config: Record<string, unknown>;
+  config: SectionConfig;
   is_published: boolean;
   items: SectionItem[];
 };
