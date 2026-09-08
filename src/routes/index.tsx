@@ -303,16 +303,16 @@ function HeroRegistration({
         className="absolute inset-0 h-full w-full object-cover object-center"
       />
       <div className="absolute inset-0 bg-hero-overlay" aria-hidden="true" />
-      <div className="absolute inset-y-0 left-0 hidden w-72 bg-side-stripes md:block" aria-hidden="true" />
+      <div className="absolute inset-y-0 left-0 hidden w-72 bg-side-stripes lg:block" aria-hidden="true" />
       <div className="pointer-events-none absolute -bottom-16 left-0 h-44 w-full bg-wave-white" aria-hidden="true" />
 
-      <div className="relative mx-auto grid min-h-[540px] max-w-7xl gap-8 px-4 py-8 md:grid-cols-[minmax(0,1fr)_22rem] md:px-8 md:py-5 lg:grid-cols-[minmax(0,1fr)_24rem] lg:px-12">
-        <div className="relative flex min-h-[430px] items-center pt-5 md:pt-0">
-          <Button variant="slider" size="icon" className="absolute left-0 top-1/2 z-20 hidden -translate-y-1/2 md:inline-flex" aria-label="Slide sebelumnya">
+      <div className="relative mx-auto grid max-w-7xl gap-8 px-4 py-8 sm:px-6 md:gap-10 md:px-8 md:py-12 lg:min-h-[540px] lg:grid-cols-[minmax(0,1fr)_23rem] lg:gap-8 lg:px-12 lg:py-6 xl:grid-cols-[minmax(0,1fr)_25rem]">
+        <div className="relative flex items-center pb-10 pt-2 sm:pb-12 lg:min-h-[430px] lg:pt-0">
+          <Button variant="slider" size="icon" className="absolute left-0 top-1/2 z-20 hidden -translate-y-1/2 lg:inline-flex" aria-label="Slide sebelumnya">
             <ChevronLeft className="size-8" aria-hidden="true" />
           </Button>
 
-          <div className="relative z-10 grid w-full gap-4 pl-0 md:pl-16 lg:grid-cols-[13rem_minmax(0,1fr)] lg:items-center lg:gap-4">
+          <div className="relative z-10 grid w-full gap-4 pl-0 lg:grid-cols-[12rem_minmax(0,1fr)] lg:items-center lg:gap-4 lg:pl-16">
             <div className="hidden h-[390px] self-end lg:flex lg:items-end lg:justify-center">
               <img
                 src={saluteStudent}
@@ -323,30 +323,30 @@ function HeroRegistration({
               />
             </div>
 
-            <div className="max-w-3xl pt-6 lg:pt-0">
-              <div className="mb-6 flex flex-wrap items-center gap-3 text-hero-foreground/95">
-                <p className="font-script text-3xl font-bold leading-none drop-shadow-title md:text-4xl">Salute Arek Malang</p>
+            <div className="max-w-3xl">
+              <div className="mb-5 flex flex-wrap items-center gap-2.5 text-hero-foreground/95 sm:gap-3 md:mb-6">
+                <p className="font-script text-2xl font-bold leading-none drop-shadow-title sm:text-3xl md:text-4xl">Salute Arek Malang</p>
                 <SmallLogo label="UT" />
                 <SmallLogo label="MP" />
                 <SmallLogo label="DIKTISAINTEK BERDAMPAK" wide />
               </div>
 
-              <h1 className="max-w-[52rem] origin-left font-display text-4xl font-black uppercase leading-[0.98] text-hero-foreground drop-shadow-title sm:text-5xl md:text-6xl lg:w-[132%] lg:scale-x-[0.78] lg:text-[3.3rem] xl:text-[3.45rem]">
+              <h1 className="max-w-[52rem] origin-left font-display text-[1.9rem] font-black uppercase leading-[1.02] text-hero-foreground drop-shadow-title sm:text-4xl md:text-5xl lg:w-[132%] lg:scale-x-[0.78] lg:text-[3.3rem] lg:leading-[0.98] xl:text-[3.45rem]">
                 SENTRA LAYANAN UNIVERSITAS TERBUKA ADA DI MPP MERDEKA MALANG LHO YUK KEPOIN !!!
               </h1>
-              <div className="mt-5 h-2 w-72 max-w-full rounded-full bg-ut-yellow shadow-yellow" aria-hidden="true" />
+              <div className="mt-4 h-2 w-52 max-w-full rounded-full bg-ut-yellow shadow-yellow sm:w-72 md:mt-5" aria-hidden="true" />
             </div>
           </div>
 
-          <Button variant="slider" size="icon" className="absolute right-0 top-1/2 z-20 hidden -translate-y-1/2 md:inline-flex" aria-label="Slide berikutnya">
+          <Button variant="slider" size="icon" className="absolute right-0 top-1/2 z-20 hidden -translate-y-1/2 lg:inline-flex" aria-label="Slide berikutnya">
             <ChevronRight className="size-8" aria-hidden="true" />
           </Button>
 
-          <div className="absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 items-center gap-3 md:bottom-9" aria-hidden="true">
-            <span className="size-3 rounded-full bg-ut-yellow" />
-            <span className="size-3 rounded-full bg-hero-foreground" />
-            <span className="size-3 rounded-full bg-hero-foreground" />
-            <span className="size-3 rounded-full bg-hero-foreground" />
+          <div className="absolute bottom-2 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2.5 sm:bottom-3 sm:gap-3 lg:bottom-9" aria-hidden="true">
+            <span className="size-2.5 rounded-full bg-ut-yellow sm:size-3" />
+            <span className="size-2.5 rounded-full bg-hero-foreground/80 sm:size-3" />
+            <span className="size-2.5 rounded-full bg-hero-foreground/80 sm:size-3" />
+            <span className="size-2.5 rounded-full bg-hero-foreground/80 sm:size-3" />
           </div>
         </div>
 
