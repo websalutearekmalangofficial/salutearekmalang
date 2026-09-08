@@ -294,7 +294,7 @@ function HeroRegistration({
   handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
 }) {
   return (
-    <section id="home" className="relative bg-hero-deep text-hero-foreground">
+    <section id="home" className="relative scroll-mt-20 bg-hero-deep text-hero-foreground">
       <img
         src={campusHero}
         alt="Gedung kampus modern Sentra Layanan UT"
@@ -452,7 +452,7 @@ function RegistrationProcess() {
             return (
               <div key={step.number} className="relative">
                 <article className="relative h-full rounded-xl border border-ut-sky/55 bg-card px-4 pb-5 pt-10 text-center shadow-step transition duration-300 hover:-translate-y-1 hover:shadow-form sm:pt-12">
-                  <span className="absolute -top-4 left-1/2 grid size-11 -translate-x-1/2 place-items-center rounded-full bg-ut-yellow text-xl font-black text-ut-navy shadow-yellow sm:size-12 sm:text-2xl lg:left-auto lg:-left-1 lg:translate-x-0">
+                  <span className="absolute -top-4 left-1/2 grid size-11 -translate-x-1/2 place-items-center rounded-full bg-ut-yellow text-xl font-black text-ut-navy shadow-yellow sm:size-12 sm:text-2xl lg:-left-1 lg:translate-x-0">
                     {step.number}
                   </span>
                   <Icon className="mx-auto mb-3 size-12 text-ut-blue sm:size-16" strokeWidth={1.8} aria-hidden="true" />
