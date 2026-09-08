@@ -3,7 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 
 import type { Database } from "@/integrations/supabase/types";
-import type { NavItem, PageContent, Section, SectionItem } from "@/lib/cms";
+import type { NavItem, PageContent, Section, SectionConfig, SectionItem } from "@/lib/cms";
 
 function createPublicClient() {
   const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
@@ -76,7 +76,7 @@ export const getPageContent = createServerFn({ method: "GET" })
 
       const sections: Section[] = (sectionRows ?? []).map((row) => ({
         ...(row as unknown as Omit<Section, "items" | "config">),
-        config: (row.config ?? {}) as Record<string, unknown>,
+        config: (row.config ?? {}) as SectionConfig,
         items: itemRows.filter((item) => item.section_id === row.id),
       }));
 

@@ -1,5 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
-import type { NavItem, PageRecord, Section, SectionItem } from "@/lib/cms";
+import type { NavItem, PageRecord, Section, SectionConfig, SectionItem } from "@/lib/cms";
 
 const SIGNED_URL_TTL = 60 * 60 * 24 * 365 * 5; // 5 tahun
 
@@ -41,7 +41,7 @@ export async function fetchSections(pageId: string): Promise<Section[]> {
 
   return rows.map((row) => ({
     ...(row as unknown as Omit<Section, "items" | "config">),
-    config: (row.config ?? {}) as Record<string, unknown>,
+    config: (row.config ?? {}) as SectionConfig,
     items: items.filter((item) => item.section_id === row.id),
   }));
 }
@@ -149,10 +149,11 @@ export async function swapOrder(
   a: { id: string; order: number },
   b: { id: string; order: number },
 ) {
-  const column = table === "nav_items" || table === "pages" ? (table === "pages" ? "nav_order" : "sort_order") : "sort_order";
+  const column = table === "pages" ? "nav_order" : "sort_order";
+  const patch = (order: number) => ({ [column]: order }) as never;
   const updates = [
-    supabase.from(table).update({ [column]: b.order }).eq("id", a.id),
-    supabase.from(table).update({ [column]: a.order }).eq("id", b.id),
+    supabase.from(table).update(patch(b.order)).eq("id", a.id),
+    supabase.from(table).update(patch(a.order)).eq("id", b.id),
   ];
   const results = await Promise.all(updates);
   const failed = results.find((result) => result.error);
