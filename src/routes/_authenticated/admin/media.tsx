@@ -12,7 +12,11 @@ export const Route = createFileRoute("/_authenticated/admin/media")({
   component: MediaAdmin,
 });
 
-const kindIcon: Record<string, typeof ImageIcon> = { image: ImageIcon, video: Video, document: FileText };
+const kindIcon: Record<string, typeof ImageIcon> = {
+  image: ImageIcon,
+  video: Video,
+  document: FileText,
+};
 
 function formatSize(bytes: number | null) {
   if (!bytes) return "-";
@@ -55,10 +59,17 @@ function MediaAdmin() {
 
   return (
     <>
-      <AdminCard title="Unggah Media" description="Gambar, video, atau dokumen maksimal 50 MB per berkas.">
+      <AdminCard
+        title="Unggah Media"
+        description="Gambar, video, atau dokumen maksimal 50 MB per berkas."
+      >
         <div className="grid gap-3 sm:grid-cols-2">
           <Field label="Nama berkas (opsional)">
-            <input className={inputClass} value={title} onChange={(e) => setTitle(e.target.value)} />
+            <input
+              className={inputClass}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
           </Field>
           <Field label="Pilih berkas">
             <input
@@ -81,7 +92,10 @@ function MediaAdmin() {
         </Button>
       </AdminCard>
 
-      <AdminCard title="Perpustakaan Media" description="Salin tautan berkas untuk dipakai saat mengedit section.">
+      <AdminCard
+        title="Perpustakaan Media"
+        description="Salin tautan berkas untuk dipakai saat mengedit section."
+      >
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {rows.map((row) => {
             const Icon = kindIcon[row.media_kind] ?? FileText;
@@ -99,7 +113,9 @@ function MediaAdmin() {
                     <Icon className="size-8" aria-hidden="true" />
                   </div>
                 )}
-                <p className="truncate text-sm font-black text-ut-navy">{row.title ?? "(tanpa nama)"}</p>
+                <p className="truncate text-sm font-black text-ut-navy">
+                  {row.title ?? "(tanpa nama)"}
+                </p>
                 <p className="text-xs font-bold text-muted-foreground">
                   {row.media_kind} · {formatSize(row.size_bytes)}
                 </p>

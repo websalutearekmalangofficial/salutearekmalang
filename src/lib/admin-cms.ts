@@ -12,7 +12,9 @@ export async function fetchIsAdmin(userId: string) {
 export async function fetchPages(): Promise<PageRecord[]> {
   const { data, error } = await supabase
     .from("pages")
-    .select("id, slug, title, meta_title, meta_description, nav_label, nav_order, show_in_nav, is_published")
+    .select(
+      "id, slug, title, meta_title, meta_description, nav_label, nav_order, show_in_nav, is_published",
+    )
     .order("nav_order", { ascending: true });
   if (error) throw error;
   return (data ?? []) as PageRecord[];
@@ -117,7 +119,8 @@ export async function uploadMedia(file: File, title?: string) {
   const { data: signed, error: signedError } = await supabase.storage
     .from("cms-media")
     .createSignedUrl(path, SIGNED_URL_TTL);
-  if (signedError || !signed?.signedUrl) throw signedError ?? new Error("Gagal membuat tautan berkas.");
+  if (signedError || !signed?.signedUrl)
+    throw signedError ?? new Error("Gagal membuat tautan berkas.");
 
   const { data: user } = await supabase.auth.getUser();
 

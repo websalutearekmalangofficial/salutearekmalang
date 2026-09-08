@@ -9,7 +9,13 @@ import { MediaPicker } from "@/components/admin/media-picker";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchPages, fetchSections, swapOrder } from "@/lib/admin-cms";
-import { iconNames, sectionKinds, type PageRecord, type Section, type SectionItem } from "@/lib/cms";
+import {
+  iconNames,
+  sectionKinds,
+  type PageRecord,
+  type Section,
+  type SectionItem,
+} from "@/lib/cms";
 
 export const Route = createFileRoute("/_authenticated/admin/halaman")({
   component: PagesAdmin,
@@ -33,7 +39,8 @@ function PagesAdmin() {
   });
 
   const refreshPages = () => queryClient.invalidateQueries({ queryKey: ["pages"] });
-  const refreshSections = () => queryClient.invalidateQueries({ queryKey: ["sections", selectedPageId] });
+  const refreshSections = () =>
+    queryClient.invalidateQueries({ queryKey: ["sections", selectedPageId] });
 
   const addPage = useMutation({
     mutationFn: async () => {
@@ -78,7 +85,10 @@ function PagesAdmin() {
 
   return (
     <>
-      <AdminCard title="Daftar Halaman" description="Pilih halaman untuk mengelola section di dalamnya.">
+      <AdminCard
+        title="Daftar Halaman"
+        description="Pilih halaman untuk mengelola section di dalamnya."
+      >
         <div className="mb-4 flex flex-wrap gap-2">
           {pages.map((page) => (
             <button
@@ -95,7 +105,12 @@ function PagesAdmin() {
               {page.is_published ? <Eye className="size-3.5" /> : <EyeOff className="size-3.5" />}
             </button>
           ))}
-          <Button type="button" variant="formOutline" className="h-10 rounded-full px-4" onClick={() => addPage.mutate()}>
+          <Button
+            type="button"
+            variant="formOutline"
+            className="h-10 rounded-full px-4"
+            onClick={() => addPage.mutate()}
+          >
             <Plus className="size-4" aria-hidden="true" />
             Halaman baru
           </Button>
@@ -122,7 +137,13 @@ function PagesAdmin() {
           {sections.length === 0 ? (
             <p className="text-sm text-muted-foreground">Belum ada section di halaman ini.</p>
           ) : null}
-          <Button type="button" variant="utYellow" size="form" onClick={() => addSection.mutate()} disabled={!selectedPageId}>
+          <Button
+            type="button"
+            variant="utYellow"
+            size="form"
+            onClick={() => addSection.mutate()}
+            disabled={!selectedPageId}
+          >
             <Plus className="size-4" aria-hidden="true" />
             Tambah section
           </Button>
@@ -176,32 +197,71 @@ function PageForm({ page, onSaved }: { page: PageRecord; onSaved: () => void }) 
     <div className="rounded-xl border border-border p-4">
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Judul halaman">
-          <input className={inputClass} value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+          <input
+            className={inputClass}
+            value={form.title}
+            onChange={(e) => setForm({ ...form, title: e.target.value })}
+          />
         </Field>
         <Field label="Alamat halaman (slug)">
-          <input className={inputClass} value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
+          <input
+            className={inputClass}
+            value={form.slug}
+            onChange={(e) => setForm({ ...form, slug: e.target.value })}
+          />
         </Field>
         <Field label="Judul untuk mesin pencari">
-          <input className={inputClass} value={form.meta_title ?? ""} onChange={(e) => setForm({ ...form, meta_title: e.target.value })} />
+          <input
+            className={inputClass}
+            value={form.meta_title ?? ""}
+            onChange={(e) => setForm({ ...form, meta_title: e.target.value })}
+          />
         </Field>
         <Field label="Label di menu">
-          <input className={inputClass} value={form.nav_label ?? ""} onChange={(e) => setForm({ ...form, nav_label: e.target.value })} />
+          <input
+            className={inputClass}
+            value={form.nav_label ?? ""}
+            onChange={(e) => setForm({ ...form, nav_label: e.target.value })}
+          />
         </Field>
         <Field label="Urutan di menu">
-          <input type="number" className={inputClass} value={form.nav_order} onChange={(e) => setForm({ ...form, nav_order: Number(e.target.value) })} />
+          <input
+            type="number"
+            className={inputClass}
+            value={form.nav_order}
+            onChange={(e) => setForm({ ...form, nav_order: Number(e.target.value) })}
+          />
         </Field>
         <Field label="Deskripsi singkat">
-          <input className={inputClass} value={form.meta_description ?? ""} onChange={(e) => setForm({ ...form, meta_description: e.target.value })} />
+          <input
+            className={inputClass}
+            value={form.meta_description ?? ""}
+            onChange={(e) => setForm({ ...form, meta_description: e.target.value })}
+          />
         </Field>
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-4">
-        <Toggle label="Tayang" checked={form.is_published} onChange={(v) => setForm({ ...form, is_published: v })} />
-        <Toggle label="Tampilkan di menu" checked={form.show_in_nav} onChange={(v) => setForm({ ...form, show_in_nav: v })} />
+        <Toggle
+          label="Tayang"
+          checked={form.is_published}
+          onChange={(v) => setForm({ ...form, is_published: v })}
+        />
+        <Toggle
+          label="Tampilkan di menu"
+          checked={form.show_in_nav}
+          onChange={(v) => setForm({ ...form, show_in_nav: v })}
+        />
       </div>
 
       <div className="mt-4 flex flex-wrap gap-2">
-        <Button type="button" variant="utYellow" size="form" onClick={() => save.mutate()} disabled={save.isPending}>
+        <Button
+          type="button"
+          variant="utYellow"
+          size="form"
+          onClick={() => save.mutate()}
+          disabled={save.isPending}
+        >
           <Save className="size-4" aria-hidden="true" />
           Simpan halaman
         </Button>
@@ -306,7 +366,8 @@ function SectionEditor({
     onError: () => toast.error("Gagal menambah isi."),
   });
 
-  const setConfig = (key: string, value: string) => setForm({ ...form, config: { ...form.config, [key]: value } });
+  const setConfig = (key: string, value: string) =>
+    setForm({ ...form, config: { ...form.config, [key]: value } });
 
   return (
     <div className="rounded-xl border border-border bg-background">
@@ -314,20 +375,43 @@ function SectionEditor({
         <span className="grid size-8 shrink-0 place-items-center rounded-full bg-ut-yellow text-sm font-black text-ut-navy">
           {index + 1}
         </span>
-        <button type="button" onClick={() => setOpen((v) => !v)} className="flex min-w-0 flex-1 items-center gap-2 text-left">
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          className="flex min-w-0 flex-1 items-center gap-2 text-left"
+        >
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-sm font-black text-ut-navy">{form.title || "(tanpa judul)"}</span>
+            <span className="block truncate text-sm font-black text-ut-navy">
+              {form.title || "(tanpa judul)"}
+            </span>
             <span className="block text-xs font-bold text-muted-foreground">
               {sectionKinds.find((kind) => kind.value === form.kind)?.label ?? form.kind}
             </span>
           </span>
-          <ChevronDown className={`size-4 shrink-0 text-ut-navy transition ${open ? "rotate-180" : ""}`} aria-hidden="true" />
+          <ChevronDown
+            className={`size-4 shrink-0 text-ut-navy transition ${open ? "rotate-180" : ""}`}
+            aria-hidden="true"
+          />
         </button>
         <div className="flex shrink-0 gap-1">
-          <Button type="button" variant="formOutline" size="icon" aria-label="Naikkan urutan" disabled={index === 0} onClick={() => move.mutate(-1)}>
+          <Button
+            type="button"
+            variant="formOutline"
+            size="icon"
+            aria-label="Naikkan urutan"
+            disabled={index === 0}
+            onClick={() => move.mutate(-1)}
+          >
             <ArrowUp className="size-4" />
           </Button>
-          <Button type="button" variant="formOutline" size="icon" aria-label="Turunkan urutan" disabled={index === total - 1} onClick={() => move.mutate(1)}>
+          <Button
+            type="button"
+            variant="formOutline"
+            size="icon"
+            aria-label="Turunkan urutan"
+            disabled={index === total - 1}
+            onClick={() => move.mutate(1)}
+          >
             <ArrowDown className="size-4" />
           </Button>
         </div>
@@ -337,7 +421,11 @@ function SectionEditor({
         <div className="space-y-4 border-t border-border p-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Jenis section">
-              <select className={inputClass} value={form.kind} onChange={(e) => setForm({ ...form, kind: e.target.value })}>
+              <select
+                className={inputClass}
+                value={form.kind}
+                onChange={(e) => setForm({ ...form, kind: e.target.value })}
+              >
                 {sectionKinds.map((kind) => (
                   <option key={kind.value} value={kind.value}>
                     {kind.label}
@@ -346,29 +434,67 @@ function SectionEditor({
               </select>
             </Field>
             <Field label="Teks kecil di atas judul">
-              <input className={inputClass} value={form.eyebrow ?? ""} onChange={(e) => setForm({ ...form, eyebrow: e.target.value })} />
+              <input
+                className={inputClass}
+                value={form.eyebrow ?? ""}
+                onChange={(e) => setForm({ ...form, eyebrow: e.target.value })}
+              />
             </Field>
             <Field label="Judul">
-              <input className={inputClass} value={form.title ?? ""} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+              <input
+                className={inputClass}
+                value={form.title ?? ""}
+                onChange={(e) => setForm({ ...form, title: e.target.value })}
+              />
             </Field>
             <Field label="Subjudul">
-              <input className={inputClass} value={form.subtitle ?? ""} onChange={(e) => setForm({ ...form, subtitle: e.target.value })} />
+              <input
+                className={inputClass}
+                value={form.subtitle ?? ""}
+                onChange={(e) => setForm({ ...form, subtitle: e.target.value })}
+              />
             </Field>
           </div>
 
           <Field label="Isi teks">
-            <textarea className={textareaClass} value={form.body ?? ""} onChange={(e) => setForm({ ...form, body: e.target.value })} />
+            <textarea
+              className={textareaClass}
+              value={form.body ?? ""}
+              onChange={(e) => setForm({ ...form, body: e.target.value })}
+            />
           </Field>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <MediaPicker label="Gambar" value={form.media_url} onChange={(url) => setForm({ ...form, media_url: url })} />
-            <MediaPicker label="Video (unggahan atau tautan YouTube)" kind="video" value={form.video_url} onChange={(url) => setForm({ ...form, video_url: url })} />
-            <MediaPicker label="Dokumen" kind="document" value={form.document_url} onChange={(url) => setForm({ ...form, document_url: url })} />
+            <MediaPicker
+              label="Gambar"
+              value={form.media_url}
+              onChange={(url) => setForm({ ...form, media_url: url })}
+            />
+            <MediaPicker
+              label="Video (unggahan atau tautan YouTube)"
+              kind="video"
+              value={form.video_url}
+              onChange={(url) => setForm({ ...form, video_url: url })}
+            />
+            <MediaPicker
+              label="Dokumen"
+              kind="document"
+              value={form.document_url}
+              onChange={(url) => setForm({ ...form, document_url: url })}
+            />
             <Field label="Tautan tombol">
-              <input className={inputClass} value={form.link_url ?? ""} onChange={(e) => setForm({ ...form, link_url: e.target.value })} />
+              <input
+                className={inputClass}
+                value={form.link_url ?? ""}
+                onChange={(e) => setForm({ ...form, link_url: e.target.value })}
+              />
             </Field>
             <Field label="Teks tombol">
-              <input className={inputClass} value={form.link_label ?? ""} onChange={(e) => setForm({ ...form, link_label: e.target.value })} />
+              <input
+                className={inputClass}
+                value={form.link_label ?? ""}
+                onChange={(e) => setForm({ ...form, link_label: e.target.value })}
+              />
             </Field>
           </div>
 
@@ -391,10 +517,20 @@ function SectionEditor({
             </div>
           ) : null}
 
-          <Toggle label="Tayang" checked={form.is_published} onChange={(v) => setForm({ ...form, is_published: v })} />
+          <Toggle
+            label="Tayang"
+            checked={form.is_published}
+            onChange={(v) => setForm({ ...form, is_published: v })}
+          />
 
           <div className="flex flex-wrap gap-2">
-            <Button type="button" variant="utYellow" size="form" onClick={() => save.mutate()} disabled={save.isPending}>
+            <Button
+              type="button"
+              variant="utYellow"
+              size="form"
+              onClick={() => save.mutate()}
+              disabled={save.isPending}
+            >
               <Save className="size-4" aria-hidden="true" />
               Simpan section
             </Button>
@@ -412,7 +548,9 @@ function SectionEditor({
           </div>
 
           <div className="rounded-xl bg-section-blue p-3">
-            <h3 className="mb-3 text-sm font-black text-ut-navy">Isi di dalam section ({section.items.length})</h3>
+            <h3 className="mb-3 text-sm font-black text-ut-navy">
+              Isi di dalam section ({section.items.length})
+            </h3>
             <div className="space-y-2">
               {section.items.map((item, itemIndex) => (
                 <ItemEditor
@@ -424,7 +562,12 @@ function SectionEditor({
                   onChanged={onChanged}
                 />
               ))}
-              <Button type="button" variant="formOutline" size="form" onClick={() => addItem.mutate()}>
+              <Button
+                type="button"
+                variant="formOutline"
+                size="form"
+                onClick={() => addItem.mutate()}
+              >
                 <Plus className="size-4" aria-hidden="true" />
                 Tambah isi
               </Button>
@@ -519,14 +662,32 @@ function ItemEditor({
         <span className="grid size-7 shrink-0 place-items-center rounded-full bg-ut-blue text-xs font-black text-hero-foreground">
           {index + 1}
         </span>
-        <button type="button" onClick={() => setOpen((v) => !v)} className="min-w-0 flex-1 truncate text-left text-sm font-bold text-ut-navy">
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          className="min-w-0 flex-1 truncate text-left text-sm font-bold text-ut-navy"
+        >
           {form.title || "(tanpa judul)"}
         </button>
         <div className="flex shrink-0 gap-1">
-          <Button type="button" variant="formOutline" size="icon" aria-label="Naikkan urutan" disabled={index === 0} onClick={() => move.mutate(-1)}>
+          <Button
+            type="button"
+            variant="formOutline"
+            size="icon"
+            aria-label="Naikkan urutan"
+            disabled={index === 0}
+            onClick={() => move.mutate(-1)}
+          >
             <ArrowUp className="size-4" />
           </Button>
-          <Button type="button" variant="formOutline" size="icon" aria-label="Turunkan urutan" disabled={index === total - 1} onClick={() => move.mutate(1)}>
+          <Button
+            type="button"
+            variant="formOutline"
+            size="icon"
+            aria-label="Turunkan urutan"
+            disabled={index === total - 1}
+            onClick={() => move.mutate(1)}
+          >
             <ArrowDown className="size-4" />
           </Button>
         </div>
@@ -536,13 +697,25 @@ function ItemEditor({
         <div className="space-y-4 border-t border-border p-3">
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Judul">
-              <input className={inputClass} value={form.title ?? ""} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+              <input
+                className={inputClass}
+                value={form.title ?? ""}
+                onChange={(e) => setForm({ ...form, title: e.target.value })}
+              />
             </Field>
             <Field label="Subjudul / status">
-              <input className={inputClass} value={form.subtitle ?? ""} onChange={(e) => setForm({ ...form, subtitle: e.target.value })} />
+              <input
+                className={inputClass}
+                value={form.subtitle ?? ""}
+                onChange={(e) => setForm({ ...form, subtitle: e.target.value })}
+              />
             </Field>
             <Field label="Ikon">
-              <select className={inputClass} value={form.icon ?? ""} onChange={(e) => setForm({ ...form, icon: e.target.value || null })}>
+              <select
+                className={inputClass}
+                value={form.icon ?? ""}
+                onChange={(e) => setForm({ ...form, icon: e.target.value || null })}
+              >
                 <option value="">Tanpa ikon</option>
                 {iconNames.map((name) => (
                   <option key={name} value={name}>
@@ -552,27 +725,63 @@ function ItemEditor({
               </select>
             </Field>
             <Field label="Badge (pisahkan dengan koma)">
-              <input className={inputClass} value={badgeText} onChange={(e) => setBadgeText(e.target.value)} />
+              <input
+                className={inputClass}
+                value={badgeText}
+                onChange={(e) => setBadgeText(e.target.value)}
+              />
             </Field>
           </div>
 
           <Field label="Isi teks">
-            <textarea className={textareaClass} value={form.body ?? ""} onChange={(e) => setForm({ ...form, body: e.target.value })} />
+            <textarea
+              className={textareaClass}
+              value={form.body ?? ""}
+              onChange={(e) => setForm({ ...form, body: e.target.value })}
+            />
           </Field>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <MediaPicker label="Gambar" value={form.media_url} onChange={(url) => setForm({ ...form, media_url: url })} />
-            <MediaPicker label="Video" kind="video" value={form.video_url} onChange={(url) => setForm({ ...form, video_url: url })} />
-            <MediaPicker label="Dokumen" kind="document" value={form.document_url} onChange={(url) => setForm({ ...form, document_url: url })} />
+            <MediaPicker
+              label="Gambar"
+              value={form.media_url}
+              onChange={(url) => setForm({ ...form, media_url: url })}
+            />
+            <MediaPicker
+              label="Video"
+              kind="video"
+              value={form.video_url}
+              onChange={(url) => setForm({ ...form, video_url: url })}
+            />
+            <MediaPicker
+              label="Dokumen"
+              kind="document"
+              value={form.document_url}
+              onChange={(url) => setForm({ ...form, document_url: url })}
+            />
             <Field label="Tautan">
-              <input className={inputClass} value={form.link_url ?? ""} onChange={(e) => setForm({ ...form, link_url: e.target.value })} />
+              <input
+                className={inputClass}
+                value={form.link_url ?? ""}
+                onChange={(e) => setForm({ ...form, link_url: e.target.value })}
+              />
             </Field>
           </div>
 
-          <Toggle label="Tayang" checked={form.is_published} onChange={(v) => setForm({ ...form, is_published: v })} />
+          <Toggle
+            label="Tayang"
+            checked={form.is_published}
+            onChange={(v) => setForm({ ...form, is_published: v })}
+          />
 
           <div className="flex flex-wrap gap-2">
-            <Button type="button" variant="utYellow" size="form" onClick={() => save.mutate()} disabled={save.isPending}>
+            <Button
+              type="button"
+              variant="utYellow"
+              size="form"
+              onClick={() => save.mutate()}
+              disabled={save.isPending}
+            >
               <Save className="size-4" aria-hidden="true" />
               Simpan isi
             </Button>
@@ -594,10 +803,23 @@ function ItemEditor({
   );
 }
 
-function Toggle({ label, checked, onChange }: { label: string; checked: boolean; onChange: (value: boolean) => void }) {
+function Toggle({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: (value: boolean) => void;
+}) {
   return (
     <label className="inline-flex cursor-pointer items-center gap-2 text-sm font-bold text-ut-navy">
-      <input type="checkbox" checked={checked} onChange={(event) => onChange(event.target.checked)} className="size-4 accent-ut-blue" />
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(event) => onChange(event.target.checked)}
+        className="size-4 accent-ut-blue"
+      />
       {label}
     </label>
   );

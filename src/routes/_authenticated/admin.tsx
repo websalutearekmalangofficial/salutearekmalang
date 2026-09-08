@@ -85,10 +85,12 @@ function AdminLayout() {
       <main className="grid min-h-screen place-items-center bg-section-blue px-4 font-body">
         <div className="w-full max-w-md rounded-2xl bg-card p-6 text-center shadow-form">
           <ShieldCheck className="mx-auto mb-3 size-12 text-ut-blue" aria-hidden="true" />
-          <h1 className="font-display text-xl font-black text-ut-navy">Akun Anda belum berperan admin</h1>
+          <h1 className="font-display text-xl font-black text-ut-navy">
+            Akun Anda belum berperan admin
+          </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Hanya admin yang bisa mengelola konten. Jika Anda pemilik website dan belum ada admin sama sekali, klaim
-            akses admin sekarang.
+            Hanya admin yang bisa mengelola konten. Jika Anda pemilik website dan belum ada admin
+            sama sekali, klaim akses admin sekarang.
           </p>
           <div className="mt-5 grid gap-2">
             <Button variant="utYellow" size="form" onClick={handleClaim} disabled={claiming}>
@@ -118,8 +120,12 @@ function AdminLayout() {
             {sidebarOpen ? <X className="size-5" /> : <Menu className="size-5" />}
           </button>
           <div className="min-w-0">
-            <p className="truncate font-display text-base font-black uppercase leading-none">Panel Pengelola</p>
-            <p className="truncate text-xs font-semibold opacity-90">Sentra Layanan UT Arek Malang</p>
+            <p className="truncate font-display text-base font-black uppercase leading-none">
+              Panel Pengelola
+            </p>
+            <p className="truncate text-xs font-semibold opacity-90">
+              Sentra Layanan UT Arek Malang
+            </p>
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-2">

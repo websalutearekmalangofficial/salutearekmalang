@@ -49,7 +49,12 @@ function NavAdmin() {
         {items.length === 0 && !navQuery.isLoading ? (
           <p className="text-sm font-medium text-muted-foreground">Belum ada menu.</p>
         ) : null}
-        <Button type="button" variant="formOutline" className="h-11 rounded-full px-4" onClick={() => addItem.mutate()}>
+        <Button
+          type="button"
+          variant="formOutline"
+          className="h-11 rounded-full px-4"
+          onClick={() => addItem.mutate()}
+        >
           <Plus className="size-4" aria-hidden="true" />
           Menu baru
         </Button>
@@ -123,10 +128,18 @@ function NavRow({
     <div className="rounded-xl border border-border bg-background p-3">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Field label="Nama menu">
-          <input className={inputClass} value={form.label} onChange={(e) => setForm({ ...form, label: e.target.value })} />
+          <input
+            className={inputClass}
+            value={form.label}
+            onChange={(e) => setForm({ ...form, label: e.target.value })}
+          />
         </Field>
         <Field label="Tautan">
-          <input className={inputClass} value={form.href} onChange={(e) => setForm({ ...form, href: e.target.value })} />
+          <input
+            className={inputClass}
+            value={form.href}
+            onChange={(e) => setForm({ ...form, href: e.target.value })}
+          />
         </Field>
         <Field label="Badge (opsional)">
           <input
@@ -180,11 +193,21 @@ function NavRow({
         >
           <ArrowDown className="size-4" aria-hidden="true" />
         </Button>
-        <Button type="button" variant="utYellow" className="h-10 rounded-full px-4" onClick={() => save.mutate()}>
+        <Button
+          type="button"
+          variant="utYellow"
+          className="h-10 rounded-full px-4"
+          onClick={() => save.mutate()}
+        >
           <Save className="size-4" aria-hidden="true" />
           Simpan
         </Button>
-        <Button type="button" variant="formOutline" className="h-10 rounded-full px-4" onClick={() => remove.mutate()}>
+        <Button
+          type="button"
+          variant="formOutline"
+          className="h-10 rounded-full px-4"
+          onClick={() => remove.mutate()}
+        >
           <Trash2 className="size-4" aria-hidden="true" />
           Hapus
         </Button>

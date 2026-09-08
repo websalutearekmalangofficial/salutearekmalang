@@ -77,7 +77,9 @@ function AuthPage() {
 
   const handleGoogle = async () => {
     try {
-      await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/auth" });
+      await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin + "/auth",
+      });
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Masuk dengan Google gagal.");
     }
@@ -151,7 +153,13 @@ function AuthPage() {
                 autoComplete={mode === "masuk" ? "current-password" : "new-password"}
                 className="h-12 w-full rounded-xl border border-input bg-background px-4 text-base font-semibold outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/25 sm:text-sm"
               />
-              <Button type="submit" variant="utYellow" size="form" className="w-full" disabled={busy}>
+              <Button
+                type="submit"
+                variant="utYellow"
+                size="form"
+                className="w-full"
+                disabled={busy}
+              >
                 <LogIn className="size-5" aria-hidden="true" />
                 {mode === "masuk" ? "Masuk" : "Buat Akun"}
               </Button>
@@ -163,7 +171,13 @@ function AuthPage() {
               <span className="h-px flex-1 bg-border" />
             </div>
 
-            <Button type="button" variant="formOutline" size="form" className="w-full" onClick={handleGoogle}>
+            <Button
+              type="button"
+              variant="formOutline"
+              size="form"
+              className="w-full"
+              onClick={handleGoogle}
+            >
               <Mail className="size-5" aria-hidden="true" />
               Lanjutkan dengan Google
             </Button>

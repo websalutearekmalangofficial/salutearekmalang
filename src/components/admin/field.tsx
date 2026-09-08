@@ -15,7 +15,15 @@ export const inputClass =
 export const textareaClass =
   "min-h-24 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm font-medium text-foreground outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/25";
 
-export function AdminCard({ title, description, children }: { title: string; description?: string; children: ReactNode }) {
+export function AdminCard({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description?: string;
+  children: ReactNode;
+}) {
   return (
     <section className="rounded-2xl bg-card p-5 shadow-benefit">
       <h2 className="font-display text-xl font-black text-ut-navy">{title}</h2>

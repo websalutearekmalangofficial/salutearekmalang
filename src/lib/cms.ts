@@ -169,11 +169,7 @@ export function sectionOf(sections: Section[], kind: string): Section | undefine
   return sections.find((section) => section.kind === kind);
 }
 
-export function configString(
-  section: Section | undefined,
-  key: string,
-  fallback: string,
-): string {
+export function configString(section: Section | undefined, key: string, fallback: string): string {
   const value = section?.config?.[key];
   return typeof value === "string" && value.trim() ? value : fallback;
 }

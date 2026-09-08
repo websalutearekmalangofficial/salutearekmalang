@@ -75,7 +75,9 @@ function RegistrationsAdmin() {
                   {row.email ?? "-"}
                   <span className="block text-xs">{row.nomor_hp ?? ""}</span>
                 </td>
-                <td className="border-b border-border p-2 font-medium text-muted-foreground">{row.jalur ?? "-"}</td>
+                <td className="border-b border-border p-2 font-medium text-muted-foreground">
+                  {row.jalur ?? "-"}
+                </td>
                 <td className="border-b border-border p-2">
                   <select
                     className={inputClass + " h-10"}

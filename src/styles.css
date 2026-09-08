@@ -201,14 +201,27 @@
 
 @utility bg-hero-nav {
   background:
-    radial-gradient(circle at 8% 0%, color-mix(in oklab, var(--ut-blue) 48%, transparent), transparent 36%),
+    radial-gradient(
+      circle at 8% 0%,
+      color-mix(in oklab, var(--ut-blue) 48%, transparent),
+      transparent 36%
+    ),
     linear-gradient(90deg, var(--ut-blue-deep), var(--ut-blue) 54%, var(--ut-navy));
 }
 
 @utility bg-hero-overlay {
   background:
-    linear-gradient(90deg, color-mix(in oklab, var(--ut-blue-deep) 90%, transparent) 0%, color-mix(in oklab, var(--ut-blue) 76%, transparent) 43%, color-mix(in oklab, var(--ut-blue) 34%, transparent) 100%),
-    linear-gradient(0deg, color-mix(in oklab, var(--ut-blue-deep) 35%, transparent), transparent 55%);
+    linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--ut-blue-deep) 90%, transparent) 0%,
+      color-mix(in oklab, var(--ut-blue) 76%, transparent) 43%,
+      color-mix(in oklab, var(--ut-blue) 34%, transparent) 100%
+    ),
+    linear-gradient(
+      0deg,
+      color-mix(in oklab, var(--ut-blue-deep) 35%, transparent),
+      transparent 55%
+    );
 }
 
 @utility bg-form-header {
@@ -217,7 +230,11 @@
 
 @utility bg-side-stripes {
   background:
-    repeating-linear-gradient(135deg, color-mix(in oklab, var(--hero-foreground) 9%, transparent) 0 12px, transparent 12px 28px),
+    repeating-linear-gradient(
+      135deg,
+      color-mix(in oklab, var(--hero-foreground) 9%, transparent) 0 12px,
+      transparent 12px 28px
+    ),
     linear-gradient(90deg, color-mix(in oklab, var(--ut-blue-deep) 70%, transparent), transparent);
 }
 
@@ -227,7 +244,11 @@
 }
 
 @utility bg-section-swoop {
-  background: radial-gradient(60% 90% at 87% 0%, color-mix(in oklab, var(--ut-sky) 19%, transparent), transparent 70%);
+  background: radial-gradient(
+    60% 90% at 87% 0%,
+    color-mix(in oklab, var(--ut-sky) 19%, transparent),
+    transparent 70%
+  );
 }
 
 @utility drop-shadow-title {

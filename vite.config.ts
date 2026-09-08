@@ -6,15 +6,10 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
-// Vercel sets VERCEL=1 during its builds. Inside Lovable's own sandbox this option is
-// ignored and the Lovable target is used, so the same repo builds for both hosts.
-const isVercel = Boolean(process.env["VERCEL"]);
-
 export default defineConfig({
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
     server: { entry: "server" },
   },
-  ...(isVercel ? { nitro: { preset: "vercel" } } : {}),
 });

@@ -1,6 +1,6 @@
 # Sentra UT Landing
 
-Act as an expert frontend developer. Buatkan saya halaman Landing Page yang modern dan responsif untuk "Sentra Layanan UT", dengan mereplika secara *persis* desain, warna, teks (Indonesian verbatim), dan layout yang ada pada gambar `image_0.png` yang saya unggah. Halaman ini harus dibuat menggunakan React, Tailwind CSS, dan Lucide Icons.
+Act as an expert frontend developer. Buatkan saya halaman Landing Page yang modern dan responsif untuk "Sentra Layanan UT", dengan mereplika secara _persis_ desain, warna, teks (Indonesian verbatim), dan layout yang ada pada gambar `image_0.png` yang saya unggah. Halaman ini harus dibuat menggunakan React, Tailwind CSS, dan Lucide Icons.
 
 Gunakan skema warna berikut secara konsisten sesuai gambar:
 
@@ -86,7 +86,7 @@ Halaman harus responsif dan memiliki struktur berurutan dari atas ke bawah seper
 
 - Layout: Grid 3 kolom.
 
-- Styling Card: Kotak dengan border tipis abu-abu, rounded-2xl, background putih. Letakkan Icon Quote (tanda kutip) warna kuning di pojok kiri atas. Teks ulasan menggunakan font italic (text-gray-700). 
+- Styling Card: Kotak dengan border tipis abu-abu, rounded-2xl, background putih. Letakkan Icon Quote (tanda kutip) warna kuning di pojok kiri atas. Teks ulasan menggunakan font italic (text-gray-700).
 
 - Profil (di bawah ulasan): Layout flex-row, justify-start, padding yang cukup. Foto profil bulat (placeholder), Nama Lengkap (Bold, biru tua), dan Badge status. Gunakan badge warna kuning untuk "Alumni" dan badge biru muda untuk "Mahasiswa Aktif". Berikan dummy content yang realistis.
 

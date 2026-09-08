@@ -19,7 +19,12 @@ function AdminOverview() {
     { label: "Halaman", value: pages.data?.length ?? 0, to: "/admin/halaman", icon: ListOrdered },
     { label: "Menu navigasi", value: nav.data?.length ?? 0, to: "/admin/navigasi", icon: Menu },
     { label: "Berkas media", value: media.data?.length ?? 0, to: "/admin/media", icon: Images },
-    { label: "Pendaftar", value: registrations.data?.length ?? 0, to: "/admin/pendaftar", icon: Users },
+    {
+      label: "Pendaftar",
+      value: registrations.data?.length ?? 0,
+      to: "/admin/pendaftar",
+      icon: Users,
+    },
   ] as const;
 
   return (
@@ -45,10 +50,22 @@ function AdminOverview() {
         description="Semua isi website diambil langsung dari panel ini, jadi setiap perubahan langsung tampil."
       >
         <ol className="grid gap-2 text-sm font-medium text-muted-foreground">
-          <li>1. Buka <strong className="text-ut-navy">Halaman &amp; Section</strong> untuk mengubah judul, teks, gambar, video, tautan, dan urutan tiap bagian.</li>
-          <li>2. Buka <strong className="text-ut-navy">Menu Navigasi</strong> untuk mengatur nama menu, tautan, dan urutannya di bagian atas website.</li>
-          <li>3. Unggah foto, video, atau dokumen di <strong className="text-ut-navy">Media</strong>, lalu pilih berkasnya saat mengedit section.</li>
-          <li>4. Lihat dan kelola orang yang mengisi formulir di <strong className="text-ut-navy">Data Pendaftar</strong>.</li>
+          <li>
+            1. Buka <strong className="text-ut-navy">Halaman &amp; Section</strong> untuk mengubah
+            judul, teks, gambar, video, tautan, dan urutan tiap bagian.
+          </li>
+          <li>
+            2. Buka <strong className="text-ut-navy">Menu Navigasi</strong> untuk mengatur nama
+            menu, tautan, dan urutannya di bagian atas website.
+          </li>
+          <li>
+            3. Unggah foto, video, atau dokumen di <strong className="text-ut-navy">Media</strong>,
+            lalu pilih berkasnya saat mengedit section.
+          </li>
+          <li>
+            4. Lihat dan kelola orang yang mengisi formulir di{" "}
+            <strong className="text-ut-navy">Data Pendaftar</strong>.
+          </li>
         </ol>
       </AdminCard>
     </>

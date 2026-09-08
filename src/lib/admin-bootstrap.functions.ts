@@ -22,7 +22,10 @@ export const claimFirstAdmin = createServerFn({ method: "POST" })
     }
 
     if ((count ?? 0) > 0) {
-      return { ok: false as const, message: "Admin sudah terdaftar. Hubungi admin untuk mendapatkan akses." };
+      return {
+        ok: false as const,
+        message: "Admin sudah terdaftar. Hubungi admin untuk mendapatkan akses.",
+      };
     }
 
     const { error } = await supabaseAdmin

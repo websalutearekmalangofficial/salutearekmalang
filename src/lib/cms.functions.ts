@@ -36,7 +36,9 @@ export const getPageContent = createServerFn({ method: "GET" })
       const [pageResult, navResult] = await Promise.all([
         supabase
           .from("pages")
-          .select("id, slug, title, meta_title, meta_description, nav_label, nav_order, show_in_nav, is_published")
+          .select(
+            "id, slug, title, meta_title, meta_description, nav_label, nav_order, show_in_nav, is_published",
+          )
           .eq("slug", data.slug)
           .eq("is_published", true)
           .maybeSingle(),
@@ -115,5 +117,8 @@ export const submitRegistration = createServerFn({ method: "POST" })
       return { ok: false as const, message: "Pendaftaran gagal dikirim. Silakan coba lagi." };
     }
 
-    return { ok: true as const, message: "Pendaftaran berhasil dikirim. Tim kami akan menghubungi Anda." };
+    return {
+      ok: true as const,
+      message: "Pendaftaran berhasil dikirim. Tim kami akan menghubungi Anda.",
+    };
   });
