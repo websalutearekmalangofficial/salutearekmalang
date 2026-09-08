@@ -49,8 +49,23 @@ export interface ButtonProps
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
+    const handleAuthClick =
+      !asChild && variant === "heroOutline"
+        ? (event: React.MouseEvent<HTMLButtonElement>) => {
+            props.onClick?.(event);
+            if (!event.defaultPrevented) {
+              window.location.assign("/auth");
+            }
+          }
+        : props.onClick;
+
     return (
-      <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+        onClick={handleAuthClick}
+      />
     );
   },
 );
