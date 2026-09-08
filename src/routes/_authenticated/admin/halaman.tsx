@@ -27,10 +27,11 @@ function PagesAdmin() {
 
   const pagesQuery = useQuery({ queryKey: ["pages"], queryFn: fetchPages });
   const pages = pagesQuery.data ?? [];
+  const firstPageId = pages[0]?.id;
 
   useEffect(() => {
-    if (!selectedPageId && pages.length > 0) setSelectedPageId(pages[0]!.id);
-  }, [pages, selectedPageId]);
+    if (!selectedPageId && firstPageId) setSelectedPageId(firstPageId);
+  }, [firstPageId, selectedPageId]);
 
   const sectionsQuery = useQuery({
     queryKey: ["sections", selectedPageId],
