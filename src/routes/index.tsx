@@ -30,6 +30,8 @@ import {
   X,
 } from "lucide-react";
 import { FormEvent, useState } from "react";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 import { Button } from "@/components/ui/button";
 import campusHero from "@/assets/ut-campus-hero.jpg";
@@ -64,7 +66,7 @@ const formFields = [
   { label: "Nama Sekolah", icon: School, type: "text", name: "sekolah" },
   { label: "Asal Kota Sekolah", icon: MapPin, type: "text", name: "kota" },
   { label: "Alamat Email", icon: Mail, type: "email", name: "email" },
-  { label: "Nomor HP", icon: Phone, type: "tel", name: "nomor" },
+  { label: "Nomor HP", icon: Phone, type: "tel", name: "nomor_hp" },
 ];
 
 const processSteps = [
@@ -185,9 +187,50 @@ const testimonials = [
 
 function Index() {
   const [selectedPath, setSelectedPath] = useState("Pilih Jalur Pendaftaran");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (isSubmitting) return;
+
+    const formData = new FormData(event.currentTarget);
+    const nama = formData.get("nama") as string;
+    const sekolah = formData.get("sekolah") as string;
+    const kota = formData.get("kota") as string;
+    const email = formData.get("email") as string;
+    const nomor_hp = formData.get("nomor_hp") as string;
+
+    if (!nama || !sekolah || !kota || !nomor_hp) {
+      toast.error("Harap isi semua kolom pendaftaran yang wajib.");
+      return;
+    }
+    if (selectedPath === "Pilih Jalur Pendaftaran") {
+      toast.error("Harap pilih jalur pendaftaran.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    const { error } = await supabase.from("registrations").insert({
+      nama,
+      sekolah,
+      kota,
+      email,
+      nomor_hp,
+      jalur: selectedPath,
+      status: "pending",
+    });
+
+    if (error) {
+      console.error(error);
+      toast.error("Gagal mengirim data. Silakan coba lagi nanti.");
+    } else {
+      toast.success("Pendaftaran berhasil dikirim! Tim kami akan menghubungi Anda segera.");
+      event.currentTarget.reset();
+      setSelectedPath("Pilih Jalur Pendaftaran");
+    }
+
+    setIsSubmitting(false);
   };
 
   return (
@@ -197,6 +240,7 @@ function Index() {
         selectedPath={selectedPath}
         setSelectedPath={setSelectedPath}
         handleSubmit={handleSubmit}
+        isSubmitting={isSubmitting}
       />
       <RegistrationProcess />
       <BenefitsSection />
@@ -330,10 +374,12 @@ function HeroRegistration({
   selectedPath,
   setSelectedPath,
   handleSubmit,
+  isSubmitting,
 }: {
   selectedPath: string;
   setSelectedPath: (value: string) => void;
   handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  isSubmitting: boolean;
 }) {
   return (
     <section id="home" className="relative scroll-mt-20 bg-hero-deep text-hero-foreground">
@@ -420,6 +466,7 @@ function HeroRegistration({
           selectedPath={selectedPath}
           setSelectedPath={setSelectedPath}
           handleSubmit={handleSubmit}
+          isSubmitting={isSubmitting}
         />
       </div>
     </section>
@@ -440,10 +487,12 @@ function RegistrationForm({
   selectedPath,
   setSelectedPath,
   handleSubmit,
+  isSubmitting,
 }: {
   selectedPath: string;
   setSelectedPath: (value: string) => void;
   handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  isSubmitting: boolean;
 }) {
   return (
     <aside className="relative z-20 mx-auto w-full max-w-md self-start overflow-hidden rounded-2xl bg-card text-card-foreground shadow-form lg:mx-0 lg:max-w-none lg:mt-4">
@@ -502,14 +551,24 @@ function RegistrationForm({
           </span>
         </label>
         <div className="grid grid-cols-1 gap-3 pt-1 sm:grid-cols-2">
-          <Button type="submit" variant="utYellow" size="form">
-            <Send className="size-5" aria-hidden="true" />
-            Daftar
+          <Button type="submit" variant="utYellow" size="form" disabled={isSubmitting}>
+            {isSubmitting ? (
+              <>
+                <RefreshCw className="size-5 animate-spin" aria-hidden="true" />
+                Mengirim...
+              </>
+            ) : (
+              <>
+                <Send className="size-5" aria-hidden="true" />
+                Daftar
+              </>
+            )}
           </Button>
           <Button
             type="reset"
             variant="formOutline"
             size="form"
+            disabled={isSubmitting}
             onClick={() => setSelectedPath("Pilih Jalur Pendaftaran")}
           >
             <RefreshCw className="size-5" aria-hidden="true" />
