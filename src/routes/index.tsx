@@ -534,7 +534,7 @@ function RegistrationForm({
             value={selectedPath}
             onChange={(event) => setSelectedPath(event.target.value)}
             aria-label="Jalur Pendaftaran"
-            className="h-12 w-full appearance-none rounded-xl border border-input bg-background pl-12 pr-10 text-base font-black sm:text-sm text-ut-navy outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/25"
+            className="h-12 w-full appearance-none rounded-xl border border-input bg-background pl-12 pr-10 pt-4 pb-1 text-base font-black sm:text-sm text-ut-navy outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/25"
           >
             <option>Pilih Jalur Pendaftaran</option>
             <option>SIPAS</option>
@@ -546,7 +546,7 @@ function RegistrationForm({
             className="pointer-events-none absolute right-4 top-1/2 size-5 -translate-y-1/2 text-ut-navy"
             aria-hidden="true"
           />
-          <span className="pointer-events-none absolute left-12 top-2 text-[0.62rem] font-bold text-muted-foreground">
+          <span className="pointer-events-none absolute left-12 top-1.5 text-[0.62rem] font-bold text-muted-foreground">
             Jalur Pendaftaran
           </span>
         </label>
