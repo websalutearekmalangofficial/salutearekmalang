@@ -77,6 +77,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "google-site-verification", content: "7krUeIAOjxDAoH5mrfJVjccyiBXV5AaHYBbjbQsasHQ" },
       { title: "Sentra Layanan UT" },
       {
         name: "description",
@@ -122,6 +123,19 @@ function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="id">
       <head>
+        {/* Google tag (gtag.js) */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-CN3BZMPTY3"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+
+              gtag('config', 'G-CN3BZMPTY3');
+            `,
+          }}
+        />
         <HeadContent />
       </head>
       <body>
