@@ -3,6 +3,13 @@ import { getPageContent } from "@/lib/cms.functions";
 import { resolveIcon, type Section, type SectionItem } from "@/lib/cms";
 import { Building2, Menu, X, ArrowLeft } from "lucide-react";
 import React, { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 export const Route = createFileRoute("/$slug")({
   loader: async ({ params }) => {
@@ -193,18 +200,24 @@ function SectionRenderer({ section }: { section: Section }) {
             {section.items?.map((item: Section) => {
               const Icon = resolveIcon(item.icon);
               return (
-                <div
+                <Card
                   key={item.id}
-                  className="rounded-2xl bg-card p-6 shadow-benefit transition hover:-translate-y-1"
+                  className="shadow-benefit transition hover:-translate-y-1 rounded-2xl overflow-hidden border-none"
                 >
-                  {Icon && (
-                    <div className="mb-4 inline-flex size-14 items-center justify-center rounded-full bg-ut-yellow text-ut-navy shadow-yellow">
-                      <Icon className="size-7" />
-                    </div>
+                  <CardHeader className="p-6 pb-2">
+                    {Icon && (
+                      <div className="mb-4 inline-flex size-14 items-center justify-center rounded-full bg-ut-yellow text-ut-navy shadow-yellow">
+                        <Icon className="size-7" />
+                      </div>
+                    )}
+                    <CardTitle className="text-xl font-bold">{item.title}</CardTitle>
+                  </CardHeader>
+                  {item.body && (
+                    <CardContent className="p-6 pt-0 text-muted-foreground">
+                      <p>{item.body}</p>
+                    </CardContent>
                   )}
-                  <h3 className="text-xl font-bold text-foreground">{item.title}</h3>
-                  {item.body && <p className="mt-2 text-muted-foreground">{item.body}</p>}
-                </div>
+                </Card>
               );
             })}
           </div>
@@ -221,24 +234,22 @@ function SectionRenderer({ section }: { section: Section }) {
             {section.title}
           </h2>
         )}
-        <div className="space-y-4">
+        <Accordion type="single" collapsible className="space-y-4">
           {section.items?.map((item: Section) => (
-            <details
+            <AccordionItem
               key={item.id}
-              className="group rounded-xl border border-border bg-card p-4 shadow-sm"
+              value={item.id}
+              className="rounded-xl border border-border bg-card px-4 shadow-sm"
             >
-              <summary className="flex cursor-pointer items-center justify-between font-semibold text-foreground">
+              <AccordionTrigger className="font-semibold text-foreground hover:no-underline">
                 {item.title}
-                <span className="ml-4 shrink-0 transition-transform group-open:rotate-180">
-                  <ChevronDown className="size-5" />
-                </span>
-              </summary>
-              <div className="mt-4 text-muted-foreground">
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground">
                 <p>{item.body}</p>
-              </div>
-            </details>
+              </AccordionContent>
+            </AccordionItem>
           ))}
-        </div>
+        </Accordion>
       </section>
     );
   }
