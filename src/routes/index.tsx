@@ -15,6 +15,7 @@ import {
   IdCard,
   Info,
   Mail,
+  Menu,
   MapPin,
   Megaphone,
   MonitorCheck,
@@ -27,6 +28,7 @@ import {
   User,
   UserRoundPlus,
   UsersRound,
+  X,
 } from "lucide-react";
 import { FormEvent, useState } from "react";
 
@@ -235,8 +237,8 @@ function Header() {
         <div className="flex items-center justify-end gap-2 md:min-w-0">
           <Button variant="heroOutline" size="pill" className="shrink-0 px-3 text-[0.7rem] sm:px-4 sm:text-xs md:text-sm">
             <CircleUserRound className="size-4" aria-hidden="true" />
-            <span className="hidden xs:inline">Masuk / Daftar</span>
-            <span className="xs:hidden">Masuk</span>
+            <span className="hidden sm:inline">Masuk / Daftar</span>
+            <span className="sm:hidden">Masuk</span>
           </Button>
           <button
             type="button"
