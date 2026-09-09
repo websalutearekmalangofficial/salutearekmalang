@@ -1,24 +1,26 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, LogIn, Mail, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowLeft, LogIn, Mail, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
+import { checkIsAdmin } from "@/hooks/use-session";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Masuk Admin - Sentra Layanan UT" },
+      { title: "Masuk atau Daftar - Sentra Layanan UT" },
       {
         name: "description",
-        content: "Halaman masuk pengelola konten website Sentra Layanan UT Arek Malang.",
+        content:
+          "Masuk atau buat akun Sentra Layanan UT Arek Malang untuk memantau pendaftaran dan mengelola konten website.",
       },
-      { property: "og:title", content: "Masuk Admin - Sentra Layanan UT" },
+      { property: "og:title", content: "Masuk atau Daftar - Sentra Layanan UT" },
       {
         property: "og:description",
-        content: "Masuk untuk mengelola halaman, menu, dan konten website Sentra Layanan UT.",
+        content: "Akses akun Sentra Layanan UT Arek Malang untuk memantau status pendaftaran Anda.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -26,6 +28,9 @@ export const Route = createFileRoute("/auth")({
   }),
   component: AuthPage,
 });
+
+const inputClass =
+  "h-12 w-full rounded-xl border border-input bg-background px-4 text-base font-semibold outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/25 sm:text-sm";
 
 function AuthPage() {
   const navigate = useNavigate();
@@ -36,37 +41,32 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined" && localStorage.getItem("demo_admin_user")) {
-      navigate({ to: "/admin", replace: true });
-      return;
-    }
+    let active = true;
+
+    const routeUser = async (userId: string) => {
+      const isAdmin = await checkIsAdmin(userId);
+      if (!active) return;
+      navigate({ to: isAdmin ? "/admin" : "/dashboard", replace: true });
+    };
 
     supabase.auth
       .getSession()
       .then(({ data }) => {
-        if (data?.session) navigate({ to: "/admin", replace: true });
+        if (data?.session?.user) void routeUser(data.session.user.id);
       })
       .catch(() => {});
 
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
-      if ((event === "SIGNED_IN" || event === "TOKEN_REFRESHED") && session) {
-        navigate({ to: "/admin", replace: true });
+      if ((event === "SIGNED_IN" || event === "USER_UPDATED") && session?.user) {
+        void routeUser(session.user.id);
       }
     });
 
-    return () => sub.subscription.unsubscribe();
+    return () => {
+      active = false;
+      sub.subscription.unsubscribe();
+    };
   }, [navigate]);
-
-  const handleDemoLogin = () => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem(
-        "demo_admin_user",
-        JSON.stringify({ id: "demo-admin-id", email: "admin@sentralayanan.ut.ac.id" }),
-      );
-    }
-    toast.success("Berhasil masuk sebagai Demo Admin.");
-    navigate({ to: "/admin", replace: true });
-  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -74,49 +74,43 @@ function AuthPage() {
     setBusy(true);
     try {
       if (mode === "masuk") {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await supabase.auth.signInWithPassword({
+          email: email.trim(),
+          password,
+        });
         if (error) {
-          if (
-            error.message?.includes("fetch") ||
-            error.message?.includes("apiKey") ||
-            error.message?.includes("Invalid API key") ||
-            error.message?.includes("placeholder")
-          ) {
-            toast.info(
-              "Supabase belum terhubung. Anda dapat menggunakan 'Akses Instant Demo Admin' untuk masuk.",
-            );
-          } else {
-            toast.error(error.message);
-          }
+          toast.error(
+            error.message === "Invalid login credentials"
+              ? "Email atau kata sandi salah."
+              : error.message === "Email not confirmed"
+                ? "Email belum dikonfirmasi. Silakan cek kotak masuk Anda."
+                : error.message,
+          );
           return;
         }
         toast.success("Berhasil masuk.");
       } else {
         const { data, error } = await supabase.auth.signUp({
-          email,
+          email: email.trim(),
           password,
           options: {
             emailRedirectTo: window.location.origin + "/auth",
-            data: { full_name: fullName },
+            data: { full_name: fullName.trim() },
           },
         });
         if (error) {
-          if (
-            error.message?.includes("fetch") ||
-            error.message?.includes("apiKey") ||
-            error.message?.includes("Invalid API key") ||
-            error.message?.includes("placeholder")
-          ) {
-            toast.info(
-              "Supabase belum terhubung. Silakan gunakan 'Akses Instant Demo Admin' untuk pengujian.",
-            );
-          } else {
-            toast.error(error.message);
-          }
+          toast.error(
+            error.message.includes("already registered")
+              ? "Email ini sudah terdaftar. Silakan masuk."
+              : error.message,
+          );
           return;
         }
-        if (!data.session) {
+        if (data.session) {
+          toast.success("Akun dibuat dan Anda langsung masuk.");
+        } else {
           toast.success("Cek email Anda untuk mengonfirmasi akun sebelum masuk.");
+          setMode("masuk");
         }
       }
     } catch (error) {
@@ -126,34 +120,31 @@ function AuthPage() {
     }
   };
 
+  const handleForgotPassword = async () => {
+    if (!email.trim()) {
+      toast.info("Isi alamat email Anda terlebih dahulu.");
+      return;
+    }
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: window.location.origin + "/reset-password",
+    });
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("Tautan penggantian kata sandi telah dikirim ke email Anda.");
+  };
+
   const handleGoogle = async () => {
     try {
       const result = await lovable.auth.signInWithOAuth("google", {
         redirect_uri: window.location.origin + "/auth",
       });
       if (result && "error" in result && result.error) {
-        const { error } = await supabase.auth.signInWithOAuth({
-          provider: "google",
-          options: {
-            redirectTo: window.location.origin + "/auth",
-          },
-        });
-        if (error) throw error;
+        throw new Error(String(result.error));
       }
-    } catch {
-      try {
-        const { error } = await supabase.auth.signInWithOAuth({
-          provider: "google",
-          options: {
-            redirectTo: window.location.origin + "/auth",
-          },
-        });
-        if (error) throw error;
-      } catch (fallbackError) {
-        toast.error(
-          fallbackError instanceof Error ? fallbackError.message : "Masuk dengan Google gagal.",
-        );
-      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Masuk dengan Google gagal.");
     }
   };
 
@@ -172,7 +163,7 @@ function AuthPage() {
           <div className="flex items-center gap-3 bg-form-header px-5 py-4 text-form-header-foreground">
             <ShieldCheck className="size-10 shrink-0 text-ut-yellow" aria-hidden="true" />
             <div>
-              <h1 className="text-xl font-black leading-tight">Panel Pengelola Konten</h1>
+              <h1 className="text-xl font-black leading-tight">Masuk / Daftar</h1>
               <p className="text-xs font-semibold opacity-90">Sentra Layanan UT Arek Malang</p>
             </div>
           </div>
@@ -201,7 +192,7 @@ function AuthPage() {
                   placeholder="Nama Lengkap"
                   aria-label="Nama Lengkap"
                   autoComplete="name"
-                  className="h-12 w-full rounded-xl border border-input bg-background px-4 text-base font-semibold outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/25 sm:text-sm"
+                  className={inputClass}
                 />
               ) : null}
               <input
@@ -212,7 +203,7 @@ function AuthPage() {
                 placeholder="Alamat Email"
                 aria-label="Alamat Email"
                 autoComplete="email"
-                className="h-12 w-full rounded-xl border border-input bg-background px-4 text-base font-semibold outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/25 sm:text-sm"
+                className={inputClass}
               />
               <input
                 type="password"
@@ -223,7 +214,7 @@ function AuthPage() {
                 placeholder="Kata Sandi"
                 aria-label="Kata Sandi"
                 autoComplete={mode === "masuk" ? "current-password" : "new-password"}
-                className="h-12 w-full rounded-xl border border-input bg-background px-4 text-base font-semibold outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/25 sm:text-sm"
+                className={inputClass}
               />
               <Button
                 type="submit"
@@ -233,9 +224,19 @@ function AuthPage() {
                 disabled={busy}
               >
                 <LogIn className="size-5" aria-hidden="true" />
-                {mode === "masuk" ? "Masuk" : "Buat Akun"}
+                {busy ? "Memproses…" : mode === "masuk" ? "Masuk" : "Buat Akun"}
               </Button>
             </form>
+
+            {mode === "masuk" ? (
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                className="mt-3 text-sm font-bold text-ut-blue underline-offset-4 hover:underline"
+              >
+                Lupa kata sandi?
+              </button>
+            ) : null}
 
             <div className="my-4 flex items-center gap-3 text-xs font-bold text-muted-foreground">
               <span className="h-px flex-1 bg-border" />
@@ -253,18 +254,6 @@ function AuthPage() {
               <Mail className="size-5" aria-hidden="true" />
               Lanjutkan dengan Google
             </Button>
-
-            <div className="mt-3 pt-2 border-t border-border">
-              <Button
-                type="button"
-                size="form"
-                className="w-full bg-ut-navy text-white hover:bg-ut-navy/90 font-bold"
-                onClick={handleDemoLogin}
-              >
-                <Sparkles className="size-5 text-ut-yellow" aria-hidden="true" />
-                Akses Instant Demo Admin
-              </Button>
-            </div>
           </div>
         </div>
       </div>
