@@ -47,28 +47,15 @@ function AdminLayout() {
         if (!active) return;
         if (data.user?.id) {
           setUserId(data.user.id);
-          setAuthChecked(true);
-        } else {
-          const demo =
-            typeof window !== "undefined" ? localStorage.getItem("demo_admin_user") : null;
-          if (demo) {
-            setUserId("demo-admin-id");
-            setAuthChecked(true);
-          } else {
-            setAuthChecked(true);
-            navigate({ to: "/auth", replace: true });
-          }
-        }
-      })
-      .catch(() => {
-        if (!active) return;
-        const demo = typeof window !== "undefined" ? localStorage.getItem("demo_admin_user") : null;
-        if (demo) {
-          setUserId("demo-admin-id");
         } else {
           navigate({ to: "/auth", replace: true });
         }
         setAuthChecked(true);
+      })
+      .catch(() => {
+        if (!active) return;
+        setAuthChecked(true);
+        navigate({ to: "/auth", replace: true });
       });
 
     return () => {
@@ -83,14 +70,12 @@ function AdminLayout() {
   });
 
   const handleSignOut = async () => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("demo_admin_user");
-    }
     await queryClient.cancelQueries();
     queryClient.clear();
     await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
   };
+
 
   const handleClaim = async () => {
     setClaiming(true);
