@@ -85,7 +85,7 @@ const processSteps = [
     title: "Isi Formulir di Website",
     body: (
       <>
-        Kunjungi situs <strong>salutearekmalang.com</strong> lalu isi formulir pendaftaran secara
+        situs <strong>salutearekmalang.com</strong> lalu isi formulir pendaftaran secara
         lengkap dan benar.
       </>
     ),
