@@ -97,7 +97,7 @@ const processSteps = [
     badges: ["SIPAS", "Non SIPAS"],
     body: (
       <>
-        Tentukan jalur pendaftaran: <strong>SIPAS</strong> atau <strong>Non SIPAS</strong>, kemudian
+        jalur pendaftaran: <strong>SIPAS</strong> atau <strong>Non SIPAS</strong>, kemudian
         pilih jenis jalur: <strong>Reguler</strong> atau <strong>RPL</strong> (Rekognisi
         Pembelajaran Lampau).
       </>
