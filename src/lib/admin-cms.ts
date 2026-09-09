@@ -5,21 +5,18 @@ const SIGNED_URL_TTL = 60 * 60 * 24 * 365 * 5; // 5 tahun
 
 export async function fetchIsAdmin(userId: string) {
   if (!userId) return false;
-  if (userId === "demo-admin-id" || userId.startsWith("demo-")) return true;
   try {
     const { data, error } = await supabase.rpc("has_role", { _user_id: userId, _role: "admin" });
     if (error) {
-      console.warn(
-        "[fetchIsAdmin] RPC has_role error, falling back to true for logged in user:",
-        error.message,
-      );
-      return true;
+      console.warn("[fetchIsAdmin] has_role error:", error.message);
+      return false;
     }
     return Boolean(data);
   } catch {
-    return true;
+    return false;
   }
 }
+
 
 export async function fetchPages(): Promise<PageRecord[]> {
   try {
