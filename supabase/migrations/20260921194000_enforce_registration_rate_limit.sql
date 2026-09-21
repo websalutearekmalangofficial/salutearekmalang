@@ -1,7 +1,9 @@
 -- Limit repeated public registration submissions by contact identity.
 -- The trigger runs with elevated privileges but is not executable by public API roles.
 
-create or replace function public.enforce_registration_rate_limit()
+create schema if not exists private;
+
+create or replace function private.enforce_registration_rate_limit()
 returns trigger
 language plpgsql
 security definer
@@ -37,10 +39,10 @@ begin
 end;
 $function$;
 
-revoke all on function public.enforce_registration_rate_limit() from public, anon, authenticated;
-grant execute on function public.enforce_registration_rate_limit() to postgres, service_role;
+revoke all on function private.enforce_registration_rate_limit() from public, anon, authenticated;
+grant execute on function private.enforce_registration_rate_limit() to postgres, service_role;
 
 drop trigger if exists registrations_rate_limit on public.registrations;
 create trigger registrations_rate_limit
 before insert on public.registrations
-for each row execute function public.enforce_registration_rate_limit();
+for each row execute function private.enforce_registration_rate_limit();
