@@ -31,7 +31,7 @@ import {
 } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { submitRegistration } from "@/lib/cms.functions";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -221,23 +221,29 @@ function Index() {
 
     setIsSubmitting(true);
 
-    const { error } = await supabase.from("registrations").insert({
-      nama,
-      sekolah,
-      kota,
-      email,
-      nomor_hp,
-      jalur: selectedPath,
-      status: "pending",
-    });
+    try {
+      const result = await submitRegistration({
+        data: {
+          nama,
+          sekolah,
+          kota,
+          email,
+          nomor_hp,
+          jalur: selectedPath,
+        },
+      });
 
-    if (error) {
-      console.error(error);
-      toast.error("Gagal mengirim data. Silakan coba lagi nanti.");
-    } else {
+      if (!result.ok) {
+        toast.error(result.message);
+        return;
+      }
+
       setIsSuccessDialogOpen(true);
       event.currentTarget.reset();
       setSelectedPath("Pilih Jalur Pendaftaran");
+    } catch (error) {
+      console.error("[registration] submit failed", error);
+      toast.error("Gagal mengirim data. Silakan coba lagi nanti.");
     }
 
     setIsSubmitting(false);
