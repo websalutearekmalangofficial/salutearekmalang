@@ -232,7 +232,7 @@ function Index() {
 
       // Kirim langsung ke Supabase. Batasi request agar tombol tidak bisa
       // terjebak di state "Mengirim..." jika jaringan/API bermasalah.
-      const { error } = await supabase
+      const { data: registration, error } = await supabase
         .from("registrations")
         .insert({
           nama,
@@ -243,12 +243,14 @@ function Index() {
           jalur: selectedPath,
           user_id: currentUser?.id ?? null,
         })
+        .select("id")
+        .single()
         .abortSignal(controller.signal);
 
-      if (error) {
-        console.error("[registration] insert failed", error.message);
+      if (error || !registration) {
+        console.error("[registration] insert failed", error?.message);
         toast.error(
-          error.message.includes("Terlalu banyak percobaan")
+          error?.message?.includes("Terlalu banyak percobaan")
             ? "Terlalu banyak percobaan. Silakan coba lagi beberapa menit."
             : "Pendaftaran gagal dikirim. Silakan coba lagi.",
         );
@@ -258,6 +260,19 @@ function Index() {
       setIsSuccessDialogOpen(true);
       event.currentTarget.reset();
       setSelectedPath("Pilih Jalur Pendaftaran");
+
+      // Auto-reply WhatsApp berjalan setelah data tersimpan. Jika API WhatsApp
+      // belum dikonfigurasi atau pengiriman gagal, pendaftaran tetap berhasil
+      // dan admin dapat melakukan resend dari /admin/pendaftar.
+      void supabase.functions
+        .invoke("send-whatsapp-registration", {
+          body: { registration_id: registration.id, mode: "auto" },
+        })
+        .then(({ error: whatsappError }) => {
+          if (whatsappError) {
+            console.warn("[registration] WhatsApp auto-reply failed:", whatsappError.message);
+          }
+        });
     } catch (error) {
       console.error("[registration] submit failed", error);
 
