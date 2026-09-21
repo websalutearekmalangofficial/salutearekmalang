@@ -1,8 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { NavItem, PageRecord, Section, SectionConfig, SectionItem } from "@/lib/cms";
 
-const SIGNED_URL_TTL = 60 * 60 * 24 * 365 * 5; // 5 tahun
-
 export async function fetchIsAdmin(userId: string) {
   if (!userId) return false;
   try {
@@ -166,18 +164,15 @@ export async function uploadMedia(file: File, title?: string) {
   });
   if (uploadError) throw uploadError;
 
-  const { data: signed, error: signedError } = await supabase.storage
-    .from("cms-media")
-    .createSignedUrl(path, SIGNED_URL_TTL);
-  if (signedError || !signed?.signedUrl)
-    throw signedError ?? new Error("Gagal membuat tautan berkas.");
+  const { data: publicUrl } = supabase.storage.from("cms-media").getPublicUrl(path);
+  if (!publicUrl?.publicUrl) throw new Error("Gagal membuat tautan berkas.");
 
   const { data: user } = await supabase.auth.getUser();
 
   const { error: insertError } = await supabase.from("media_library").insert({
     title: title?.trim() || file.name,
     storage_path: path,
-    url: signed.signedUrl,
+    url: publicUrl.publicUrl,
     media_kind: guessMediaKind(file),
     mime_type: file.type || null,
     size_bytes: file.size,
@@ -185,7 +180,7 @@ export async function uploadMedia(file: File, title?: string) {
   });
   if (insertError) throw insertError;
 
-  return signed.signedUrl;
+  return publicUrl.publicUrl;
 }
 
 export async function deleteMedia(row: MediaRow) {
