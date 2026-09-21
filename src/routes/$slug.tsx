@@ -3,6 +3,7 @@ import { getPageContent } from "@/lib/cms.functions";
 import { resolveIcon, type Section, type SectionItem } from "@/lib/cms";
 import { Building2, Menu, X, ArrowLeft, ArrowRight, CheckCircle2, MessageCircle, Quote, Sparkles } from "lucide-react";
 import React, { useState } from "react";
+import DOMPurify from "isomorphic-dompurify";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Accordion,
@@ -141,7 +142,21 @@ function SectionRenderer({ section }: { section: Section }) {
       <section className="px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <div className="mx-auto max-w-6xl rounded-[2rem] border border-border bg-card p-7 shadow-sm sm:p-10 lg:p-14">
           {section.title && <h2 className="text-3xl font-display font-black text-ut-navy sm:text-4xl">{section.title}</h2>}
-          {section.body && <div className="prose prose-lg mt-6 max-w-none prose-headings:font-display prose-headings:font-bold prose-a:text-ut-blue" dangerouslySetInnerHTML={{ __html: section.body }} />}
+          {section.body && <div
+            className="prose prose-lg mt-6 max-w-none prose-headings:font-display prose-headings:font-bold prose-a:text-ut-blue"
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(section.body, {
+                USE_PROFILES: { html: true },
+                ALLOWED_TAGS: [
+                  "p", "br", "strong", "b", "em", "i", "u", "s",
+                  "h2", "h3", "h4", "ul", "ol", "li", "blockquote",
+                  "a", "img", "hr", "code", "pre",
+                ],
+                ALLOWED_ATTR: ["href", "target", "rel", "src", "alt", "title"],
+                FORBID_ATTR: ["style", "onerror", "onclick", "onload"],
+              }),
+            }}
+          />}
           {section.link_url && <Link to={section.link_url} className="mt-8 inline-flex items-center gap-2 font-black text-ut-blue hover:text-ut-navy">{section.link_label || "Pelajari lebih lanjut"}<ArrowRight className="size-4" /></Link>}
         </div>
       </section>
