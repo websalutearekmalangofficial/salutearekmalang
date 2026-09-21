@@ -221,21 +221,29 @@ function Index() {
 
     setIsSubmitting(true);
 
-    try {
-      const { data: sessionData } = await supabase.auth.getUser();
-      const currentUser = sessionData?.user ?? null;
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), 10000);
 
-      // Kirim langsung ke Supabase agar tidak menunggu cold start server function.
-      // RLS membatasi akses insert dan trigger database tetap menjalankan rate-limit anti-spam.
-      const { error } = await supabase.from("registrations").insert({
-        nama,
-        sekolah: sekolah || null,
-        kota: kota || null,
-        email: email || null,
-        nomor_hp: nomor_hp || null,
-        jalur: selectedPath,
-        user_id: currentUser?.id ?? null,
-      });
+    try {
+      // getSession membaca sesi lokal tanpa network round-trip seperti getUser().
+      // Otorisasi tetap divalidasi oleh RLS di database.
+      const { data: sessionData } = await supabase.auth.getSession();
+      const currentUser = sessionData?.session?.user ?? null;
+
+      // Kirim langsung ke Supabase. Batasi request agar tombol tidak bisa
+      // terjebak di state "Mengirim..." jika jaringan/API bermasalah.
+      const { error } = await supabase
+        .from("registrations")
+        .insert({
+          nama,
+          sekolah: sekolah || null,
+          kota: kota || null,
+          email: email || null,
+          nomor_hp: nomor_hp || null,
+          jalur: selectedPath,
+          user_id: currentUser?.id ?? null,
+        })
+        .abortSignal(controller.signal);
 
       if (error) {
         console.error("[registration] insert failed", error.message);
@@ -252,10 +260,16 @@ function Index() {
       setSelectedPath("Pilih Jalur Pendaftaran");
     } catch (error) {
       console.error("[registration] submit failed", error);
-      toast.error("Gagal mengirim data. Silakan coba lagi nanti.");
-    }
 
-    setIsSubmitting(false);
+      if (error instanceof DOMException && error.name === "AbortError") {
+        toast.error("Koneksi terlalu lama. Data belum dikirim, silakan coba lagi.");
+      } else {
+        toast.error("Gagal mengirim data. Silakan coba lagi nanti.");
+      }
+    } finally {
+      window.clearTimeout(timeoutId);
+      setIsSubmitting(false);
+    }
   };
 
   return (
