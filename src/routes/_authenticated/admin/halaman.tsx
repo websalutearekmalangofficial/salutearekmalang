@@ -807,3 +807,41 @@ function ItemEditor({
               Simpan isi
             </Button>
             <Button
+              type="button"
+              variant="formOutline"
+              size="form"
+              onClick={() => {
+                if (confirm("Hapus isi ini?")) remove.mutate();
+              }}
+            >
+              <Trash2 className="size-4" aria-hidden="true" />
+              Hapus
+            </Button>
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function Toggle({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: (value: boolean) => void;
+}) {
+  return (
+    <label className="inline-flex cursor-pointer items-center gap-2 text-sm font-bold text-ut-navy">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(event) => onChange(event.target.checked)}
+        className="size-4 accent-ut-blue"
+      />
+      {label}
+    </label>
+  );
+}
