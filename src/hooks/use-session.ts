@@ -41,7 +41,12 @@ export function useSession() {
 /** Memeriksa apakah pengguna memiliki peran admin di database. */
 export async function checkIsAdmin(userId: string | undefined | null) {
   if (!userId) return false;
-  const { data, error } = await supabase.rpc("has_role", { _user_id: userId, _role: "admin" });
+  const { data, error } = await supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", userId)
+    .eq("role", "admin")
+    .maybeSingle();
   if (error) return false;
   return Boolean(data);
 }
