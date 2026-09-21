@@ -32,6 +32,7 @@ import {
 import { FormEvent, useState } from "react";
 import { toast } from "sonner";
 import { submitRegistration } from "@/lib/cms.functions";
+import { supabase } from "@/integrations/supabase/client";
 
 import { Button } from "@/components/ui/button";
 import {
