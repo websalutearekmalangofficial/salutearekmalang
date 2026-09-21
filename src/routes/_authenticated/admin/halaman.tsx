@@ -90,31 +90,42 @@ function PagesAdmin() {
         title="Daftar Halaman"
         description="Pilih halaman untuk mengelola section di dalamnya."
       >
-        <div className="mb-4 flex flex-wrap gap-2">
-          {pages.map((page) => (
-            <button
-              key={page.id}
+        <div className="mb-4 rounded-2xl border border-border bg-background p-3 sm:p-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="min-w-0 flex-1">
+              <p className="mb-1 text-xs font-black uppercase tracking-[0.08em] text-muted-foreground">
+                Halaman aktif
+              </p>
+              <div className="relative">
+                <select
+                  aria-label="Pilih halaman"
+                  value={selectedPageId ?? ""}
+                  onChange={(event) => setSelectedPageId(event.target.value)}
+                  className="h-11 w-full appearance-none rounded-xl border border-border bg-card px-4 pr-10 text-sm font-black text-ut-navy outline-none transition focus:border-ut-blue focus:ring-2 focus:ring-ut-blue/20"
+                >
+                  {pages.map((page) => (
+                    <option key={page.id} value={page.id}>
+                      {page.title}{page.is_published ? " • Tayang" : " • Draft"}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown
+                  className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-ut-navy"
+                  aria-hidden="true"
+                />
+              </div>
+            </div>
+            <Button
               type="button"
-              onClick={() => setSelectedPageId(page.id)}
-              className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-black transition ${
-                page.id === selectedPageId
-                  ? "bg-ut-yellow text-ut-navy shadow-yellow"
-                  : "border border-border bg-background text-ut-navy hover:bg-section-blue"
-              }`}
+              variant="formOutline"
+              className="h-11 w-full shrink-0 rounded-xl px-4 sm:w-auto"
+              onClick={() => addPage.mutate()}
+              disabled={addPage.isPending}
             >
-              {page.title}
-              {page.is_published ? <Eye className="size-3.5" /> : <EyeOff className="size-3.5" />}
-            </button>
-          ))}
-          <Button
-            type="button"
-            variant="formOutline"
-            className="h-10 rounded-full px-4"
-            onClick={() => addPage.mutate()}
-          >
-            <Plus className="size-4" aria-hidden="true" />
-            Halaman baru
-          </Button>
+              <Plus className="size-4" aria-hidden="true" />
+              Halaman baru
+            </Button>
+          </div>
         </div>
 
         {selectedPage ? <PageForm page={selectedPage} onSaved={refreshPages} /> : null}
@@ -247,8 +258,7 @@ function PageForm({ page, onSaved }: { page: PageRecord; onSaved: () => void }) 
         <Field label="Deskripsi singkat">
           <input
             className={inputClass}
-            value={form.meta_description ?? ""}
-            onChange={(e) => setForm({ ...form, meta_description: e.target.value })}
+            value={form.meta_description ?? ""}            onChange={(e) => setForm({ ...form, meta_description: e.target.value })}
           />
         </Field>
       </div>
@@ -497,8 +507,7 @@ function SectionEditor({
             <Field label="Tautan tombol">
               <input
                 className={inputClass}
-                value={form.link_url ?? ""}
-                onChange={(e) => setForm({ ...form, link_url: e.target.value })}
+                value={form.link_url ?? ""}                onChange={(e) => setForm({ ...form, link_url: e.target.value })}
               />
             </Field>
             <Field label="Teks tombol">
@@ -798,41 +807,3 @@ function ItemEditor({
               Simpan isi
             </Button>
             <Button
-              type="button"
-              variant="formOutline"
-              size="form"
-              onClick={() => {
-                if (confirm("Hapus isi ini?")) remove.mutate();
-              }}
-            >
-              <Trash2 className="size-4" aria-hidden="true" />
-              Hapus
-            </Button>
-          </div>
-        </div>
-      ) : null}
-    </div>
-  );
-}
-
-function Toggle({
-  label,
-  checked,
-  onChange,
-}: {
-  label: string;
-  checked: boolean;
-  onChange: (value: boolean) => void;
-}) {
-  return (
-    <label className="inline-flex cursor-pointer items-center gap-2 text-sm font-bold text-ut-navy">
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={(event) => onChange(event.target.checked)}
-        className="size-4 accent-ut-blue"
-      />
-      {label}
-    </label>
-  );
-}
