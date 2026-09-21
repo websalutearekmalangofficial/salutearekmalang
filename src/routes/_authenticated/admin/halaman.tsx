@@ -165,7 +165,6 @@ function PageForm({ page, onSaved }: { page: PageRecord; onSaved: () => void }) 
         .update({
           slug: form.slug.trim(),
           title: form.title.trim(),
-          content: form.content,
           meta_title: form.meta_title,
           meta_description: form.meta_description,
           nav_label: form.nav_label,

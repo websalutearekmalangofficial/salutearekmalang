@@ -32,6 +32,7 @@ import {
 import { FormEvent, useState } from "react";
 import { toast } from "sonner";
 import { submitRegistration } from "@/lib/cms.functions";
+import { supabase } from "@/integrations/supabase/client";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -222,20 +223,41 @@ function Index() {
     setIsSubmitting(true);
 
     try {
-      const result = await submitRegistration({
-        data: {
-          nama,
-          sekolah,
-          kota,
-          email,
-          nomor_hp,
-          jalur: selectedPath,
-        },
-      });
+      const { data: sessionData } = await supabase.auth.getUser();
+      const currentUser = sessionData?.user ?? null;
 
-      if (!result.ok) {
-        toast.error(result.message);
-        return;
+      if (currentUser) {
+        // Pengguna yang masuk: pendaftaran ditautkan ke akunnya agar bisa dipantau di dashboard.
+        const { error } = await supabase.from("registrations").insert({
+          nama,
+          sekolah: sekolah || null,
+          kota: kota || null,
+          email: email || null,
+          nomor_hp: nomor_hp || null,
+          jalur: selectedPath,
+          user_id: currentUser.id,
+        });
+        if (error) {
+          console.error("[registration] insert failed", error.message);
+          toast.error("Pendaftaran gagal dikirim. Silakan coba lagi.");
+          return;
+        }
+      } else {
+        const result = await submitRegistration({
+          data: {
+            nama,
+            sekolah,
+            kota,
+            email,
+            nomor_hp,
+            jalur: selectedPath,
+          },
+        });
+
+        if (!result.ok) {
+          toast.error(result.message);
+          return;
+        }
       }
 
       setIsSuccessDialogOpen(true);
