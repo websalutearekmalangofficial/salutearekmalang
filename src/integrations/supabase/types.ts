@@ -203,6 +203,90 @@ export type Database = {
         }
         Relationships: []
       }
+      whatsapp_templates: {
+        Row: {
+          id: string
+          name: string
+          description: string | null
+          body: string
+          meta_template_name: string | null
+          meta_language_code: string
+          is_active: boolean
+          is_auto_reply: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          description?: string | null
+          body: string
+          meta_template_name?: string | null
+          meta_language_code?: string
+          is_active?: boolean
+          is_auto_reply?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          description?: string | null
+          body?: string
+          meta_template_name?: string | null
+          meta_language_code?: string
+          is_active?: boolean
+          is_auto_reply?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      whatsapp_messages: {
+        Row: {
+          id: string
+          registration_id: string
+          template_id: string | null
+          phone_number: string
+          message_body: string
+          status: string
+          provider_message_id: string | null
+          error_message: string | null
+          sent_by: string | null
+          sent_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          registration_id: string
+          template_id?: string | null
+          phone_number: string
+          message_body: string
+          status?: string
+          provider_message_id?: string | null
+          error_message?: string | null
+          sent_by?: string | null
+          sent_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          registration_id?: string
+          template_id?: string | null
+          phone_number?: string
+          message_body?: string
+          status?: string
+          provider_message_id?: string | null
+          error_message?: string | null
+          sent_by?: string | null
+          sent_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       section_items: {
         Row: {
           badges: string[]
