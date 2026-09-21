@@ -31,7 +31,6 @@ import {
 } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { toast } from "sonner";
-import { submitRegistration } from "@/lib/cms.functions";
 import { supabase } from "@/integrations/supabase/client";
 
 import { Button } from "@/components/ui/button";
@@ -226,38 +225,26 @@ function Index() {
       const { data: sessionData } = await supabase.auth.getUser();
       const currentUser = sessionData?.user ?? null;
 
-      if (currentUser) {
-        // Pengguna yang masuk: pendaftaran ditautkan ke akunnya agar bisa dipantau di dashboard.
-        const { error } = await supabase.from("registrations").insert({
-          nama,
-          sekolah: sekolah || null,
-          kota: kota || null,
-          email: email || null,
-          nomor_hp: nomor_hp || null,
-          jalur: selectedPath,
-          user_id: currentUser.id,
-        });
-        if (error) {
-          console.error("[registration] insert failed", error.message);
-          toast.error("Pendaftaran gagal dikirim. Silakan coba lagi.");
-          return;
-        }
-      } else {
-        const result = await submitRegistration({
-          data: {
-            nama,
-            sekolah,
-            kota,
-            email,
-            nomor_hp,
-            jalur: selectedPath,
-          },
-        });
+      // Kirim langsung ke Supabase agar tidak menunggu cold start server function.
+      // RLS membatasi akses insert dan trigger database tetap menjalankan rate-limit anti-spam.
+      const { error } = await supabase.from("registrations").insert({
+        nama,
+        sekolah: sekolah || null,
+        kota: kota || null,
+        email: email || null,
+        nomor_hp: nomor_hp || null,
+        jalur: selectedPath,
+        user_id: currentUser?.id ?? null,
+      });
 
-        if (!result.ok) {
-          toast.error(result.message);
-          return;
-        }
+      if (error) {
+        console.error("[registration] insert failed", error.message);
+        toast.error(
+          error.message.includes("Terlalu banyak percobaan")
+            ? "Terlalu banyak percobaan. Silakan coba lagi beberapa menit."
+            : "Pendaftaran gagal dikirim. Silakan coba lagi.",
+        );
+        return;
       }
 
       setIsSuccessDialogOpen(true);
