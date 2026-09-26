@@ -244,8 +244,8 @@ function Index() {
           user_id: currentUser?.id ?? null,
         })
         .select("id")
-        .single()
-        .abortSignal(controller.signal);
+        .abortSignal(controller.signal)
+        .single();
 
       if (error || !registration) {
         console.error("[registration] insert failed", error?.message);
