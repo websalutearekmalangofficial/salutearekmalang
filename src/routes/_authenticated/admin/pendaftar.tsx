@@ -111,25 +111,25 @@ function RegistrationsAdmin() {
   const templatesQuery = useQuery({
     queryKey: ["whatsapp-templates"],
     queryFn: async (): Promise<WhatsAppTemplate[]> => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("whatsapp_templates")
         .select("*")
         .eq("is_active", true)
         .order("created_at", { ascending: true });
       if (error) throw error;
-      return (data ?? []) as WhatsAppTemplate[];
+      return (data ?? []) as unknown as WhatsAppTemplate[];
     },
   });
 
   const messagesQuery = useQuery({
     queryKey: ["whatsapp-messages"],
     queryFn: async (): Promise<WhatsAppMessage[]> => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("whatsapp_messages")
         .select("*")
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return (data ?? []) as WhatsAppMessage[];
+      return (data ?? []) as unknown as WhatsAppMessage[];
     },
   });
 
