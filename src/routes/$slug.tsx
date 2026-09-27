@@ -4,7 +4,6 @@ import { resolveIcon, type PageContent, type Section, type SectionItem } from "@
 import { Building2, Menu, X, ArrowLeft, ArrowRight, CheckCircle2, MessageCircle, Quote, Sparkles } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import DOMPurify from "isomorphic-dompurify";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Accordion,
@@ -33,6 +32,16 @@ export const Route = createFileRoute("/$slug")({
 
 function CmsPage() {
   return <CmsPageView content={Route.useLoaderData()} />;
+}
+
+
+function sanitizeCmsHtml(html: string) {
+  return html
+    .replace(/<\\/(?:script|style|iframe|object|embed|form)[^>]*>/gi, "")
+    .replace(/<(?:script|style|iframe|object|embed|form)[^>]*>[\\s\\S]*?<\\/(?:script|style|iframe|object|embed|form)>/gi, "")
+    .replace(/\\son[a-z]+\\s*=\\s*(?:"[^"]*"|'[^']*'|[^\\s>]+)/gi, "")
+    .replace(/(href|src)\\s*=\\s*(?:"\\s*javascript:[^"]*"|'\\s*javascript:[^']*'|\\s*javascript:[^\\s>]+)/gi, "")
+    .replace(/<\\s*(meta|link|base)[^>]*>/gi, "");
 }
 
 export function CmsPageView({ content }: { content: PageContent }) {
