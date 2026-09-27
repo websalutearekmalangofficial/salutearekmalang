@@ -39,7 +39,7 @@ export const getPageContent = createServerFn({ method: "GET" })
         supabase
           .from("pages")
           .select(
-            "id, slug, title, meta_title, meta_description, nav_label, nav_order, show_in_nav, is_published",
+            "id, slug, title, content, meta_title, meta_description, nav_label, nav_order, show_in_nav, is_published",
           )
           .eq("slug", data.slug)
           .eq("is_published", true)
