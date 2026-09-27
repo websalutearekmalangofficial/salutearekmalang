@@ -70,7 +70,10 @@ function SettingsAdmin() {
     queryKey: ["whatsapp-templates"],
     retry: false,
     queryFn: async (): Promise<WhatsAppTemplate[]> => {
-      const { data, error } = await (supabase as any).rpc("get_admin_whatsapp_templates");
+      const { data, error } = await (supabase as any)
+        .from("whatsapp_templates")
+        .select("*")
+        .order("created_at", { ascending: true });
       if (error) throw error;
       return (data ?? []) as WhatsAppTemplate[];
     },
@@ -345,7 +348,7 @@ function SettingsAdmin() {
           {templatesQuery.isError ? (
             <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-800">
               <p className="font-bold">Template WhatsApp belum dapat dimuat.</p>
-              <p className="mt-1">{templatesQuery.error instanceof Error ? templatesQuery.error.message : "Terjadi kesalahan saat membaca template."}</p>
+              <p className="mt-1">{(templatesQuery.error as { message?: string } | null)?.message ?? "Terjadi kesalahan saat membaca template."}</p>
               <Button
                 type="button"
                 variant="formOutline"
