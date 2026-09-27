@@ -427,6 +427,24 @@ function RegistrationsAdmin() {
                     {renderTemplate(selectedTemplate.body, selectedRegistration)}
                   </p>
                 </div>
+              ) : templatesQuery.isError ? (
+                <div className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                  <AlertCircle className="mt-0.5 size-4 shrink-0" />
+                  <div>
+                    <p className="font-bold">Template WhatsApp gagal dimuat.</p>
+                    <p className="mt-1">
+                      {(templatesQuery.error as Error)?.message || "Periksa akses admin dan koneksi database."}
+                    </p>
+                    <Button
+                      type="button"
+                      variant="formOutline"
+                      className="mt-2 h-8"
+                      onClick={() => templatesQuery.refetch()}
+                    >
+                      Muat ulang template
+                    </Button>
+                  </div>
+                </div>
               ) : (
                 <div className="flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
                   <AlertCircle className="size-4 shrink-0" />
