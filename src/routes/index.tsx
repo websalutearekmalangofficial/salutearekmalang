@@ -49,18 +49,21 @@ import campusHero from "@/assets/ut-campus-hero.jpg";
 import saluteStudent from "@/assets/salute-student.png";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
+  loader: async () => getPageContent({ data: { slug: "beranda" } }),
+  head: ({ loaderData }) => ({
     meta: [
-      { title: "Sentra Layanan UT Arek Malang" },
+      { title: loaderData?.page?.meta_title || loaderData?.page?.title || "Sentra Layanan UT Arek Malang" },
       {
         name: "description",
         content:
+          loaderData?.page?.meta_description ||
           "Landing page resmi Sentra Layanan UT Arek Malang untuk pendaftaran, alur layanan, kelebihan, testimoni, dan informasi kontak.",
       },
-      { property: "og:title", content: "Sentra Layanan UT Arek Malang" },
+      { property: "og:title", content: loaderData?.page?.meta_title || loaderData?.page?.title || "Sentra Layanan UT Arek Malang" },
       {
         property: "og:description",
         content:
+          loaderData?.page?.meta_description ||
           "Daftar dan dapatkan informasi pendaftaran Universitas Terbuka melalui Sentra Layanan UT Arek Malang.",
       },
       { property: "og:type", content: "website" },
@@ -68,7 +71,7 @@ export const Route = createFileRoute("/")({
     ],
   }),
   component: Index,
-});
+};
 
 function Index() {
   const content = Route.useLoaderData();
