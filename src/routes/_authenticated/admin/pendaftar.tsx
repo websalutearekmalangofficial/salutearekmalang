@@ -3,11 +3,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   AlertCircle,
-  CheckCircle2,
   ExternalLink,
   MessageCircle,
   Trash2,
-  XCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 
