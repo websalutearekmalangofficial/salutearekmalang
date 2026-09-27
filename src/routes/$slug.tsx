@@ -1,3 +1,4 @@
+import DOMPurify from "dompurify";
 import { createFileRoute, notFound, Link, useRouter } from "@tanstack/react-router";
 import { getPageContent } from "@/lib/cms.functions";
 import { resolveIcon, type PageContent, type Section, type SectionItem } from "@/lib/cms";
@@ -37,11 +38,11 @@ function CmsPage() {
 
 function sanitizeCmsHtml(html: string) {
   return html
-    .replace(/<\\/(?:script|style|iframe|object|embed|form)[^>]*>/gi, "")
-    .replace(/<(?:script|style|iframe|object|embed|form)[^>]*>[\\s\\S]*?<\\/(?:script|style|iframe|object|embed|form)>/gi, "")
-    .replace(/\\son[a-z]+\\s*=\\s*(?:"[^"]*"|'[^']*'|[^\\s>]+)/gi, "")
-    .replace(/(href|src)\\s*=\\s*(?:"\\s*javascript:[^"]*"|'\\s*javascript:[^']*'|\\s*javascript:[^\\s>]+)/gi, "")
-    .replace(/<\\s*(meta|link|base)[^>]*>/gi, "");
+    .replace(/<(?:script|style|iframe|object|embed|form)[^>]*>[\s\S]*?<\/(?:script|style|iframe|object|embed|form)>/gi, "")
+    .replace(/<\/?(?:script|style|iframe|object|embed|form)[^>]*>/gi, "")
+    .replace(/\son[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, "")
+    .replace(/(href|src)\s*=\s*(?:"\s*javascript:[^"]*"|'\s*javascript:[^']*'|\s*javascript:[^\s>]+)/gi, "")
+    .replace(/<\s*(meta|link|base)[^>]*>/gi, "");
 }
 
 export function CmsPageView({ content }: { content: PageContent }) {
