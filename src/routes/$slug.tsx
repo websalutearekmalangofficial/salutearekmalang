@@ -32,7 +32,7 @@ export const Route = createFileRoute("/$slug")({
 });
 
 function CmsPage() {
-  return <CmsPageView content={Route.useLoaderData()} />;
+  return <CmsPageView content={Route.useLoaderData() ?? { page: null, sections: [], nav: [] }} />;
 }
 
 
@@ -46,7 +46,7 @@ function sanitizeCmsHtml(html: string) {
 }
 
 export function CmsPageView({ content }: { content: PageContent }) {
-  const { page, sections, nav } = content;
+  const { page, sections = [], nav = [] } = content ?? { page: null, sections: [], nav: [] };
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
 

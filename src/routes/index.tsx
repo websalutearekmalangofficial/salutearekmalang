@@ -74,7 +74,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const content = Route.useLoaderData();
+  const content = Route.useLoaderData() ?? { page: null, sections: [], nav: [] };
   const router = useRouter();
   const [selectedPath, setSelectedPath] = useState("Pilih Jalur Pendaftaran");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -139,8 +139,7 @@ function Index() {
           user_id: currentUser?.id ?? null,
         })
         .select("id")
-        .single()
-        .abortSignal(controller.signal);
+        .single();
 
       if (error || !registration) {
         console.error("[registration] insert failed", error?.message);
@@ -289,7 +288,7 @@ function RegistrationForm({
   handleSubmit,
   isSubmitting,
 }: {
-  section?: Section;
+  section?: Section | undefined;
   selectedPath: string;
   setSelectedPath: (value: string) => void;
   handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
@@ -329,7 +328,7 @@ function RegistrationForm({
   );
 }
 
-function RegistrationProcess({ section }: { section?: Section }) {
+function RegistrationProcess({ section }: { section?: Section | undefined }) {
   const items = section?.items?.filter((item) => item.is_published) ?? [];
   return (
     <section id="panduan" className="relative scroll-mt-20 bg-background px-4 pb-12 pt-10 sm:px-6 md:px-8 md:pt-12 lg:px-12">
@@ -344,7 +343,7 @@ function RegistrationProcess({ section }: { section?: Section }) {
   );
 }
 
-function BenefitsSection({ section }: { section?: Section }) {
+function BenefitsSection({ section }: { section?: Section | undefined }) {
   const items = section?.items?.filter((item) => item.is_published) ?? [];
   return (
     <section id="informasi" className="scroll-mt-20 bg-section-blue px-4 py-12 sm:px-6 md:px-8 md:py-16 lg:px-12">
@@ -359,7 +358,7 @@ function BenefitsSection({ section }: { section?: Section }) {
   );
 }
 
-function TestimonialsSection({ section }: { section?: Section }) {
+function TestimonialsSection({ section }: { section?: Section | undefined }) {
   const items = section?.items?.filter((item) => item.is_published) ?? [];
   return (
     <section id="kontak" className="scroll-mt-20 bg-background px-4 py-12 sm:px-6 md:px-8 md:py-16 lg:px-12">
@@ -373,7 +372,7 @@ function TestimonialsSection({ section }: { section?: Section }) {
   );
 }
 
-function FooterBanner({ section }: { section?: Section }) {
+function FooterBanner({ section }: { section?: Section | undefined }) {
   const phone = section?.body || "0812-3002-4264";
   const href = section?.link_url || "https://wa.me/6281230024264";
   return (
