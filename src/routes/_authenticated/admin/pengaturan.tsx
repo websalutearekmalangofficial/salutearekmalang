@@ -74,8 +74,25 @@ function SettingsAdmin() {
         .from("whatsapp_templates")
         .select("*")
         .order("created_at", { ascending: true });
-      if (error) throw error;
-      return (data ?? []) as WhatsAppTemplate[];
+
+      if (!error) return (data ?? []) as WhatsAppTemplate[];
+
+      // Some Supabase projects can temporarily serve a stale PostgREST
+      // schema cache after a table is created/exposed. Fall back to the
+      // existing admin RPC so the settings page can still read the same
+      // database table without showing a false "table not found" state.
+      const message = String(error.message ?? "");
+      const isSchemaCacheError =
+        message.includes("schema cache") ||
+        message.includes("Could not find the table");
+
+      if (!isSchemaCacheError) throw error;
+
+      const { data: rpcData, error: rpcError } = await (supabase as any)
+        .rpc("get_admin_whatsapp_templates");
+
+      if (rpcError) throw error;
+      return (rpcData ?? []) as WhatsAppTemplate[];
     },
   });
 
