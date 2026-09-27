@@ -120,6 +120,16 @@ function SettingsAdmin() {
 
   const saveTemplate = useMutation({
     mutationFn: async (template: WhatsAppTemplate) => {
+      const name = template.name.trim();
+      const body = template.body.trim();
+
+      if (!name || !body) {
+        throw new Error("Nama template dan isi pesan wajib diisi.");
+      }
+
+      let templateId = template.id;
+
+      // Clear the previous default only when this template is explicitly made default.
       if (template.is_auto_reply) {
         const { error: clearDefaultsError } = await (supabase as any)
           .from("whatsapp_templates")
@@ -129,32 +139,72 @@ function SettingsAdmin() {
       }
 
       const payload = {
-        name: template.name.trim(),
+        name,
         description: template.description?.trim() || null,
-        body: template.body.trim(),
+        body,
         meta_template_name: template.meta_template_name?.trim() || null,
         meta_language_code: template.meta_language_code.trim() || "id",
         is_active: template.is_active,
         is_auto_reply: template.is_auto_reply,
+        updated_at: new Date().toISOString(),
       };
 
-      if (template.id) {
-        const { error } = await (supabase as any)
+      if (templateId) {
+        const { data, error } = await (supabase as any)
           .from("whatsapp_templates")
           .update(payload)
-          .eq("id", template.id);
+          .eq("id", templateId)
+          .select("*")
+          .single();
         if (error) throw error;
+        if (!data) throw new Error("Template tidak ditemukan saat menyimpan.");
       } else {
-        const { error } = await (supabase as any).from("whatsapp_templates").insert(payload);
+        const { data, error } = await (supabase as any)
+          .from("whatsapp_templates")
+          .insert(payload)
+          .select("*")
+          .single();
         if (error) throw error;
+        templateId = data?.id;
+        if (!templateId) throw new Error("Template tersimpan tetapi ID tidak dikembalikan.");
       }
+
+      // Keep the configured default in admin_settings synchronized with the template.
+      if (template.is_auto_reply && templateId) {
+        const user = await supabase.auth.getUser();
+        const { error: settingError } = await (supabase as any)
+          .from("admin_settings")
+          .upsert({
+            key: "whatsapp_default_template_id",
+            value: templateId,
+            updated_by: user.data.user?.id ?? null,
+            updated_at: new Date().toISOString(),
+          });
+        if (settingError) throw settingError;
+      } else if (defaultTemplateId === template.id && !template.is_active) {
+        const { error: settingError } = await (supabase as any)
+          .from("admin_settings")
+          .upsert({
+            key: "whatsapp_default_template_id",
+            value: "",
+            updated_at: new Date().toISOString(),
+          });
+        if (settingError) throw settingError;
+      }
+
+      return templateId;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       setDraft(null);
-      queryClient.invalidateQueries({ queryKey: ["whatsapp-templates"] });
-      toast.success("Template WhatsApp disimpan.");
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["whatsapp-templates"] }),
+        queryClient.invalidateQueries({ queryKey: ["admin-settings"] }),
+      ]);
+      toast.success("Template WhatsApp berhasil disimpan dan disinkronkan.");
     },
-    onError: (error) => toast.error(error.message || "Gagal menyimpan template."),
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Gagal menyimpan template.");
+    },
   });
 
   const deleteTemplate = useMutation({
