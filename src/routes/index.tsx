@@ -71,7 +71,7 @@ export const Route = createFileRoute("/")({
     ],
   }),
   component: Index,
-};
+});
 
 function Index() {
   const content = Route.useLoaderData();
