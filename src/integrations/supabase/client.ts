@@ -36,11 +36,11 @@ function createSupabaseClient() {
   const SUPABASE_URL =
     import.meta.env["VITE_SUPABASE_URL"] ||
     process.env["SUPABASE_URL"] ||
-    "https://placeholder-project.supabase.co";
+    "https://yfhbokrybbcbxgafjdhi.supabase.co";
   const SUPABASE_PUBLISHABLE_KEY =
     import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] ||
     process.env["SUPABASE_PUBLISHABLE_KEY"] ||
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSJ9.dummy";
+    "sb_publishable_ZT48gFRX9Oa7KplQarYXPQ_l50lDtSi";
 
   if (SUPABASE_URL === "https://placeholder-project.supabase.co") {
     console.warn(
