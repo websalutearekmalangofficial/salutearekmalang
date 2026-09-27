@@ -119,6 +119,14 @@ function SettingsAdmin() {
 
   const saveTemplate = useMutation({
     mutationFn: async (template: WhatsAppTemplate) => {
+      if (template.is_auto_reply) {
+        const { error: clearDefaultsError } = await (supabase as any)
+          .from("whatsapp_templates")
+          .update({ is_auto_reply: false })
+          .neq("id", template.id || "00000000-0000-0000-0000-000000000000");
+        if (clearDefaultsError) throw clearDefaultsError;
+      }
+
       const payload = {
         name: template.name.trim(),
         description: template.description?.trim() || null,
@@ -152,6 +160,13 @@ function SettingsAdmin() {
     mutationFn: async (id: string) => {
       const { error } = await (supabase as any).from("whatsapp_templates").delete().eq("id", id);
       if (error) throw error;
+
+      if (defaultTemplateId === id) {
+        const { error: settingError } = await (supabase as any)
+          .from("admin_settings")
+          .upsert({ key: "whatsapp_default_template_id", value: "", updated_at: new Date().toISOString() });
+        if (settingError) throw settingError;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["whatsapp-templates"] });
