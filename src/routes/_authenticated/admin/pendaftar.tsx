@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import {
@@ -67,6 +67,17 @@ function RegistrationsAdmin() {
     queryFn: fetchRegistrations,
   });
 
+  const settingsQuery = useQuery({
+    queryKey: ["admin-settings"],
+    queryFn: async (): Promise<Record<string, string>> => {
+      const { data, error } = await (supabase as any)
+        .from("admin_settings")
+        .select("key,value");
+      if (error) throw error;
+      return Object.fromEntries((data ?? []).map((item: { key: string; value: string }) => [item.key, item.value]));
+    },
+  });
+
   const templatesQuery = useQuery({
     queryKey: ["whatsapp-templates"],
     queryFn: async (): Promise<WhatsAppTemplate[]> => {
@@ -81,6 +92,22 @@ function RegistrationsAdmin() {
   });
 
 
+
+  useEffect(() => {
+    const channel = supabase
+      .channel("admin-whatsapp-live")
+      .on("postgres_changes", { event: "*", schema: "public", table: "admin_settings" }, () => {
+        queryClient.invalidateQueries({ queryKey: ["admin-settings"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "whatsapp_templates" }, () => {
+        queryClient.invalidateQueries({ queryKey: ["whatsapp-templates"] });
+      })
+      .subscribe();
+
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
 
   const refresh = () => {
     queryClient.invalidateQueries({ queryKey: ["registrations"] });
@@ -115,10 +142,15 @@ function RegistrationsAdmin() {
 
 
 
+  const settings = settingsQuery.data ?? {};
+  const whatsappEnabled = settings.whatsapp_enabled !== "false";
+  const defaultTemplateId = settings.whatsapp_default_template_id ?? "";
+
   const openComposer = (row: RegistrationRow) => {
     setSelectedRegistration(row);
+    const configuredTemplate = templatesQuery.data?.find((template) => template.id === defaultTemplateId);
     const autoTemplate = templatesQuery.data?.find((template) => template.is_auto_reply);
-    setSelectedTemplateId(autoTemplate?.id ?? templatesQuery.data?.[0]?.id ?? "");
+    setSelectedTemplateId(configuredTemplate?.id ?? autoTemplate?.id ?? templatesQuery.data?.[0]?.id ?? "");
   };
 
   const openManualWhatsApp = (row: RegistrationRow, template?: WhatsAppTemplate) => {
@@ -218,7 +250,7 @@ function RegistrationsAdmin() {
                       <Button
                         type="button"
                         className="h-9 gap-1.5 rounded-lg"
-                        disabled={!hasPhone || templatesQuery.isLoading || templatesQuery.isError}
+                        disabled={!whatsappEnabled || !hasPhone || templatesQuery.isLoading || templatesQuery.isError}
                         onClick={() => openComposer(row)}
                       >
                         <MessageCircle className="size-4" />
