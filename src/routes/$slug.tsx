@@ -1,3 +1,4 @@
+import DOMPurify from "dompurify";
 import { createFileRoute, notFound, Link, useRouter } from "@tanstack/react-router";
 import { getPageContent } from "@/lib/cms.functions";
 import { resolveIcon, type PageContent, type Section, type SectionItem } from "@/lib/cms";
