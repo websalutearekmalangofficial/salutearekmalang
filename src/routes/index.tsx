@@ -33,7 +33,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { getPageContent } from "@/lib/cms.functions";
-import { configString, sectionOf, type PageContent, type Section } from "@/lib/cms";
+import { configString, sectionOf, resolveIcon, type PageContent, type Section } from "@/lib/cms";
 
 import { Button } from "@/components/ui/button";
 import {
