@@ -9,6 +9,7 @@ import {
   LogOut,
   Menu,
   ShieldCheck,
+  Settings,
   Users,
   X,
 } from "lucide-react";
@@ -29,6 +30,7 @@ const menu = [
   { to: "/admin/navigasi", label: "Menu Navigasi", icon: Menu, exact: false },
   { to: "/admin/media", label: "Media", icon: Images, exact: false },
   { to: "/admin/pendaftar", label: "Data Pendaftar", icon: Users, exact: false },
+  { to: "/admin/pengaturan", label: "Pengaturan", icon: Settings, exact: false },
 ] as const;
 
 function AdminLayout() {
