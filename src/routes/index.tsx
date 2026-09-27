@@ -139,7 +139,6 @@ function Index() {
           user_id: currentUser?.id ?? null,
         })
         .select("id")
-        .abortSignal(controller.signal)
         .single();
 
       if (error || !registration) {
