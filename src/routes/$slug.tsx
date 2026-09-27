@@ -1,8 +1,9 @@
-import { createFileRoute, notFound, Link } from "@tanstack/react-router";
+import { createFileRoute, notFound, Link, useRouter } from "@tanstack/react-router";
 import { getPageContent } from "@/lib/cms.functions";
-import { resolveIcon, type Section, type SectionItem } from "@/lib/cms";
+import { resolveIcon, type PageContent, type Section, type SectionItem } from "@/lib/cms";
 import { Building2, Menu, X, ArrowLeft, ArrowRight, CheckCircle2, MessageCircle, Quote, Sparkles } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import DOMPurify from "isomorphic-dompurify";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -31,8 +32,47 @@ export const Route = createFileRoute("/$slug")({
 });
 
 function CmsPage() {
-  const { page, sections, nav } = Route.useLoaderData();
+  return <CmsPageView content={Route.useLoaderData()} />;
+}
+
+export function CmsPageView({ content }: { content: PageContent }) {
+  const { page, sections, nav } = content;
+  const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (!page) return;
+
+    let refreshTimer: ReturnType<typeof setTimeout> | undefined;
+    const refresh = () => {
+      if (refreshTimer) clearTimeout(refreshTimer);
+      refreshTimer = setTimeout(() => {
+        void router.invalidate();
+      }, 100);
+    };
+
+    const channel = supabase
+      .channel("cms-live-" + page.id)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "pages", filter: "id=eq." + page.id },
+        refresh,
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "sections", filter: "page_id=eq." + page.id },
+        refresh,
+      )
+      .on("postgres_changes", { event: "*", schema: "public", table: "section_items" }, refresh)
+      .on("postgres_changes", { event: "*", schema: "public", table: "nav_items" }, refresh)
+      .subscribe();
+
+    return () => {
+      if (refreshTimer) clearTimeout(refreshTimer);
+      void supabase.removeChannel(channel);
+    };
+  }, [page, router]);
+
   if (!page) return null;
 
   return (
