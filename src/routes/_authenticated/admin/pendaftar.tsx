@@ -1,14 +1,11 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   AlertCircle,
   CheckCircle2,
   ExternalLink,
-  Loader2,
   MessageCircle,
-  RefreshCw,
-  Send,
   Trash2,
   XCircle,
 } from "lucide-react";
@@ -40,18 +37,6 @@ type WhatsAppTemplate = {
   is_auto_reply: boolean;
 };
 
-type WhatsAppMessage = {
-  id: string;
-  registration_id: string;
-  template_id: string | null;
-  phone_number: string;
-  message_body: string;
-  status: "pending" | "sent" | "failed";
-  provider_message_id: string | null;
-  error_message: string | null;
-  sent_at: string | null;
-  created_at: string;
-};
 
 export const Route = createFileRoute("/_authenticated/admin/pendaftar")({
   component: RegistrationsAdmin,
@@ -73,30 +58,6 @@ function renderTemplate(body: string, row: RegistrationRow) {
     .replaceAll("{{status}}", row.status ?? "");
 }
 
-function statusBadge(status: WhatsAppMessage["status"]) {
-  if (status === "sent") {
-    return (
-      <Badge variant="secondary" className="gap-1 border-green-200 bg-green-50 text-green-700">
-        <CheckCircle2 className="size-3" />
-        Terkirim
-      </Badge>
-    );
-  }
-  if (status === "failed") {
-    return (
-      <Badge variant="destructive" className="gap-1">
-        <XCircle className="size-3" />
-        Gagal
-      </Badge>
-    );
-  }
-  return (
-    <Badge variant="outline" className="gap-1">
-      <Loader2 className="size-3 animate-spin" />
-      Memproses
-    </Badge>
-  );
-}
 
 function RegistrationsAdmin() {
   const queryClient = useQueryClient();
@@ -121,30 +82,14 @@ function RegistrationsAdmin() {
     },
   });
 
-  const messagesQuery = useQuery({
-    queryKey: ["whatsapp-messages"],
-    queryFn: async (): Promise<WhatsAppMessage[]> => {
-      const { data, error } = await (supabase as any)
-        .from("whatsapp_messages")
-        .select("*")
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return (data ?? []) as unknown as WhatsAppMessage[];
-    },
-  });
+
 
   const refresh = () => {
     queryClient.invalidateQueries({ queryKey: ["registrations"] });
     queryClient.invalidateQueries({ queryKey: ["whatsapp-messages"] });
   };
 
-  const latestMessageByRegistration = useMemo(() => {
-    const map = new Map<string, WhatsAppMessage>();
-    for (const message of messagesQuery.data ?? []) {
-      if (!map.has(message.registration_id)) map.set(message.registration_id, message);
-    }
-    return map;
-  }, [messagesQuery.data]);
+
 
   const updateStatus = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
@@ -170,40 +115,7 @@ function RegistrationsAdmin() {
     onError: () => toast.error("Gagal menghapus data."),
   });
 
-  const sendWhatsApp = useMutation({
-    mutationFn: async ({
-      registrationId,
-      templateId,
-    }: {
-      registrationId: string;
-      templateId: string;
-    }) => {
-      const { data, error } = await supabase.functions.invoke("send-whatsapp-registration", {
-        body: {
-          registration_id: registrationId,
-          template_id: templateId,
-          mode: "manual",
-        },
-      });
 
-      if (error) {
-        throw new Error(error.message || "Gagal menghubungi layanan WhatsApp.");
-      }
-      if (!data?.ok) {
-        throw new Error(data?.error || "Pesan WhatsApp gagal dikirim.");
-      }
-      return data;
-    },
-    onSuccess: () => {
-      toast.success("Pesan WhatsApp berhasil dikirim.");
-      refresh();
-      setSelectedRegistration(null);
-    },
-    onError: (error) => {
-      toast.error(error.message);
-      refresh();
-    },
-  });
 
   const openComposer = (row: RegistrationRow) => {
     setSelectedRegistration(row);
@@ -231,9 +143,6 @@ function RegistrationsAdmin() {
   const rows: RegistrationRow[] = query.data ?? [];
   const selectedTemplate = templatesQuery.data?.find((template) => template.id === selectedTemplateId);
   const selectedPhone = normalizePhone(selectedRegistration?.nomor_hp ?? null);
-  const selectedLatestMessage = selectedRegistration
-    ? latestMessageByRegistration.get(selectedRegistration.id)
-    : null;
 
   return (
     <>
@@ -247,16 +156,14 @@ function RegistrationsAdmin() {
             <p className="mt-1 text-2xl font-black text-ut-navy">{rows.length}</p>
           </div>
           <div className="rounded-xl border border-border bg-muted/30 p-3">
-            <p className="text-xs font-black uppercase tracking-wide text-muted-foreground">WhatsApp Terkirim</p>
-            <p className="mt-1 text-2xl font-black text-green-700">
-              {(messagesQuery.data ?? []).filter((message) => message.status === "sent").length}
+            <p className="text-xs font-black uppercase tracking-wide text-muted-foreground">Template Aktif</p>
+            <p className="mt-1 text-2xl font-black text-ut-navy">
+              {templatesQuery.data?.length ?? 0}
             </p>
           </div>
           <div className="rounded-xl border border-border bg-muted/30 p-3">
-            <p className="text-xs font-black uppercase tracking-wide text-muted-foreground">Pengiriman Gagal</p>
-            <p className="mt-1 text-2xl font-black text-destructive">
-              {(messagesQuery.data ?? []).filter((message) => message.status === "failed").length}
-            </p>
+            <p className="text-xs font-black uppercase tracking-wide text-muted-foreground">Cara Kirim</p>
+            <p className="mt-1 text-sm font-black text-ut-navy">Buka WhatsApp</p>
           </div>
         </div>
 
@@ -311,41 +218,15 @@ function RegistrationsAdmin() {
                       </select>
                     </td>
                     <td className="border-b border-border p-2">
-                      <div className="flex min-w-48 flex-col gap-2">
-                        {latest ? statusBadge(latest.status) : (
-                          <Badge variant="outline" className="w-fit">
-                            Belum dikirim
-                          </Badge>
-                        )}
-                        {latest?.error_message ? (
-                          <span className="max-w-56 text-xs font-medium text-destructive">
-                            {latest.error_message}
-                          </span>
-                        ) : null}
-                        <div className="flex gap-2">
-                          <Button
-                            type="button"
-                            className="h-9 gap-1.5 rounded-lg"
-                            disabled={!hasPhone || templatesQuery.isLoading}
-                            onClick={() => openComposer(row)}
-                          >
-                            <MessageCircle className="size-4" />
-                            Chat
-                          </Button>
-                          {latest?.status === "failed" ? (
-                            <Button
-                              type="button"
-                              variant="formOutline"
-                              className="h-9 gap-1.5 rounded-lg"
-                              disabled={!hasPhone || templatesQuery.isLoading}
-                              onClick={() => openComposer(row)}
-                            >
-                              <RefreshCw className="size-4" />
-                              Resend
-                            </Button>
-                          ) : null}
-                        </div>
-                      </div>
+                      <Button
+                        type="button"
+                        className="h-9 gap-1.5 rounded-lg"
+                        disabled={!hasPhone || templatesQuery.isLoading || templatesQuery.isError}
+                        onClick={() => openComposer(row)}
+                      >
+                        <MessageCircle className="size-4" />
+                        Chat
+                      </Button>
                     </td>
                     <td className="border-b border-border p-2">
                       <Button
@@ -372,7 +253,7 @@ function RegistrationsAdmin() {
       <Dialog
         open={Boolean(selectedRegistration)}
         onOpenChange={(open) => {
-          if (!open && !sendWhatsApp.isPending) setSelectedRegistration(null);
+          if (!open) setSelectedRegistration(null);
         }}
       >
         <DialogContent className="max-w-xl">
@@ -403,7 +284,7 @@ function RegistrationsAdmin() {
                   className={inputClass}
                   value={selectedTemplateId}
                   onChange={(event) => setSelectedTemplateId(event.target.value)}
-                  disabled={templatesQuery.isLoading || sendWhatsApp.isPending}
+                  disabled={templatesQuery.isLoading}
                 >
                   {(templatesQuery.data ?? []).map((template) => (
                     <option key={template.id} value={template.id}>
@@ -420,7 +301,7 @@ function RegistrationsAdmin() {
                       Preview Pesan
                     </span>
                     {selectedTemplate.is_auto_reply ? (
-                      <Badge variant="secondary">Auto Reply</Badge>
+                      <Badge variant="secondary">Default</Badge>
                     ) : null}
                   </div>
                   <p className="whitespace-pre-wrap text-sm font-medium leading-6 text-foreground">
@@ -452,13 +333,7 @@ function RegistrationsAdmin() {
                 </div>
               )}
 
-              {selectedLatestMessage?.status === "failed" ? (
-                <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-                  <p className="font-bold">Pengiriman terakhir gagal.</p>
-                  <p className="mt-1">{selectedLatestMessage.error_message ?? "Alasan tidak tersedia."}</p>
-                </div>
-              ) : null}
-            </div>
+           </div>
           ) : null}
 
           <DialogFooter className="gap-2 sm:justify-between">
@@ -476,33 +351,12 @@ function RegistrationsAdmin() {
             </Button>
             <Button
               type="button"
-              className="gap-2"
-              disabled={
-                !selectedRegistration ||
-                !selectedTemplateId ||
-                !selectedPhone ||
-                sendWhatsApp.isPending
-              }
-              onClick={() => {
-                if (selectedRegistration) {
-                  sendWhatsApp.mutate({
-                    registrationId: selectedRegistration.id,
-                    templateId: selectedTemplateId,
-                  });
-                }
-              }}
+              variant="formOutline"
+              onClick={() => setSelectedRegistration(null)}
             >
-              {sendWhatsApp.isPending ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : selectedLatestMessage?.status === "failed" ? (
-                <RefreshCw className="size-4" />
-              ) : (
-                <Send className="size-4" />
-              )}
-              {selectedLatestMessage?.status === "failed" ? "Kirim Ulang" : "Kirim WhatsApp"}
+              Tutup
             </Button>
-          </DialogFooter>
-        </DialogContent>
+          </DialogFooter>    </DialogContent>
       </Dialog>
     </>
   );
