@@ -74,7 +74,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const content = Route.useLoaderData();
+  const content = Route.useLoaderData() ?? { page: null, sections: [], nav: [] };
   const router = useRouter();
   const [selectedPath, setSelectedPath] = useState("Pilih Jalur Pendaftaran");
   const [isSubmitting, setIsSubmitting] = useState(false);
