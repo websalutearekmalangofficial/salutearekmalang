@@ -220,14 +220,14 @@ function Header({ nav }: { nav: PageContent["nav"] }) {
         </a>
         <nav className="hidden items-center justify-center gap-3 md:flex lg:gap-9" aria-label="Navigasi utama">
           <a href="#home" className="inline-flex items-center gap-2 rounded-full bg-ut-yellow px-4 py-2.5 text-sm font-black text-ut-navy shadow-yellow lg:px-5"><Home className="size-4" aria-hidden="true" />Beranda</a>
-          {nav.map((link) => <a key={link.id} href={link.href.startsWith("#") ? link.href : link.href.startsWith("/") ? link.href : `#${link.href}`} className="rounded-full px-2 py-1 text-sm font-bold text-hero-foreground/95 transition hover:text-ut-yellow">{link.label}</a>)}
+          {nav.filter((link) => link.href !== "#beranda" && link.label.toLowerCase() !== "beranda").map((link) => <a key={link.id} href={link.href.startsWith("#") ? link.href : link.href.startsWith("/") ? link.href : `#${link.href}`} className="rounded-full px-2 py-1 text-sm font-bold text-hero-foreground/95 transition hover:text-ut-yellow">{link.label}</a>)}
         </nav>
         <div className="flex items-center justify-end gap-2 md:min-w-0">
           <Button variant="heroOutline" size="pill" className="shrink-0 px-3 text-[0.7rem] sm:px-4 sm:text-xs md:text-sm"><CircleUserRound className="size-4" aria-hidden="true" /><span className="hidden sm:inline">Masuk / Daftar</span><span className="sm:hidden">Masuk</span></Button>
           <button type="button" onClick={() => setMenuOpen((open) => !open)} aria-expanded={menuOpen} className="grid size-10 shrink-0 place-items-center rounded-full border border-hero-foreground/60 bg-hero-foreground/10 md:hidden">{menuOpen ? <X className="size-5" /> : <Menu className="size-5" />}</button>
         </div>
       </div>
-      {menuOpen ? <nav className="border-t border-hero-foreground/20 px-4 pb-4 pt-3 md:hidden"><ul className="grid gap-2"><li><a href="#home" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 rounded-xl bg-ut-yellow px-4 py-3 text-sm font-black text-ut-navy"><Home className="size-4" />Beranda</a></li>{nav.map((link) => <li key={link.id}><a href={link.href.startsWith("/") ? link.href : `#${link.href}`} onClick={() => setMenuOpen(false)} className="block rounded-xl bg-hero-foreground/10 px-4 py-3 text-sm font-bold text-hero-foreground">{link.label}</a></li>)}</ul></nav> : null}
+      {menuOpen ? <nav className="border-t border-hero-foreground/20 px-4 pb-4 pt-3 md:hidden"><ul className="grid gap-2"><li><a href="#home" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 rounded-xl bg-ut-yellow px-4 py-3 text-sm font-black text-ut-navy"><Home className="size-4" />Beranda</a></li>{nav.filter((link) => link.href !== "#beranda" && link.label.toLowerCase() !== "beranda").map((link) => <li key={link.id}><a href={link.href.startsWith("/") ? link.href : `#${link.href}`} onClick={() => setMenuOpen(false)} className="block rounded-xl bg-hero-foreground/10 px-4 py-3 text-sm font-bold text-hero-foreground">{link.label}</a></li>)}</ul></nav> : null}
     </header>
   );
 }
@@ -381,7 +381,7 @@ function FooterBanner({ section }: { section?: Section }) {
       <div className="mx-auto grid max-w-7xl gap-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-8">
         <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 md:justify-start">
           <div className="grid size-12 shrink-0 place-items-center rounded-full bg-whatsapp text-whatsapp-foreground shadow-lg sm:size-14"><Phone className="size-6 sm:size-8" /></div>
-          <p className="text-lg font-black leading-tight sm:text-xl">{section?.title || "Informasi"}<span className="block">Pendaftaran</span></p>
+          <p className="text-lg font-black leading-tight sm:text-xl">{section?.title || "Informasi Pendaftaran"}</p>
           <span className="hidden h-12 w-px bg-hero-foreground/70 sm:block" />
           <a href={href} className="rounded-full border-4 border-ut-sky bg-footer-pill px-4 py-2 text-lg font-black text-hero-foreground shadow-inner transition hover:bg-ut-sky/30 sm:px-6 sm:text-2xl md:text-3xl">{phone}</a>
         </div>
