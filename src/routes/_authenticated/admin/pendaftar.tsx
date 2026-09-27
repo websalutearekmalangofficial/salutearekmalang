@@ -182,7 +182,6 @@ function RegistrationsAdmin() {
             </thead>
             <tbody>
               {rows.map((row) => {
-                const latest = latestMessageByRegistration.get(row.id);
                 const hasPhone = Boolean(normalizePhone(row.nomor_hp));
 
                 return (
@@ -288,7 +287,7 @@ function RegistrationsAdmin() {
                 >
                   {(templatesQuery.data ?? []).map((template) => (
                     <option key={template.id} value={template.id}>
-                      {template.name}{template.is_auto_reply ? " — Auto Reply" : ""}
+                      {template.name}{template.is_auto_reply ? " — Default" : ""}
                     </option>
                   ))}
                 </select>
