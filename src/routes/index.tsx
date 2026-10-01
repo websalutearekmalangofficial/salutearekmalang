@@ -240,13 +240,14 @@ function HeroRegistration({
   isSubmitting: boolean;
 }) {
   const hero = sectionOf(content.sections, "hero");
+  const formSection = sectionOf(content.sections, "form");
   return (
     <section id="home" className="relative scroll-mt-20 bg-hero-deep text-hero-foreground">
       <img src={campusHero} alt="Gedung kampus modern Sentra Layanan UT" width="1600" height="760" className="absolute inset-0 h-full w-full object-cover object-center" />
       <div className="absolute inset-0 bg-hero-overlay" aria-hidden="true" />
       <div className="absolute inset-y-0 left-0 hidden w-72 bg-side-stripes lg:block" aria-hidden="true" />
       <div className="pointer-events-none absolute -bottom-16 left-0 h-44 w-full bg-wave-white" aria-hidden="true" />
-      <div className="relative mx-auto grid max-w-7xl gap-8 px-4 py-8 sm:px-6 md:gap-10 md:px-8 md:py-12 lg:min-h-[540px] lg:grid-cols-[minmax(0,1fr)_23rem] lg:gap-8 lg:px-12 lg:py-6 xl:grid-cols-[minmax(0,1fr)_25rem]">
+      <div className={`relative mx-auto grid max-w-7xl gap-8 px-4 py-8 sm:px-6 md:gap-10 md:px-8 md:py-12 lg:min-h-[540px] lg:px-12 lg:py-6 ${formSection ? "lg:grid-cols-[minmax(0,1fr)_23rem] lg:gap-8 xl:grid-cols-[minmax(0,1fr)_25rem]" : ""}`}>
         <div className="relative flex items-center pb-10 pt-2 sm:pb-12 lg:min-h-[430px] lg:pt-0">
           <Button variant="slider" size="icon" className="absolute left-0 top-1/2 z-20 hidden -translate-y-1/2 lg:inline-flex" aria-label="Slide sebelumnya"><ChevronLeft className="size-8" /></Button>
           <div className="relative z-10 grid w-full gap-4 pl-0 lg:grid-cols-[12rem_minmax(0,1fr)] lg:items-center lg:gap-4 lg:pl-16">
@@ -260,7 +261,7 @@ function HeroRegistration({
           <Button variant="slider" size="icon" className="absolute right-0 top-1/2 z-20 hidden -translate-y-1/2 lg:inline-flex" aria-label="Slide berikutnya"><ChevronRight className="size-8" /></Button>
           <div className="absolute bottom-2 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2.5 sm:bottom-3 sm:gap-3 lg:bottom-9" aria-hidden="true"><span className="size-2.5 rounded-full bg-ut-yellow sm:size-3" /><span className="size-2.5 rounded-full bg-hero-foreground/80 sm:size-3" /><span className="size-2.5 rounded-full bg-hero-foreground/80 sm:size-3" /><span className="size-2.5 rounded-full bg-hero-foreground/80 sm:size-3" /></div>
         </div>
-        <RegistrationForm selectedPath={selectedPath} setSelectedPath={setSelectedPath} handleSubmit={handleSubmit} isSubmitting={isSubmitting} section={sectionOf(content.sections, "form")} />
+        {formSection ? <RegistrationForm selectedPath={selectedPath} setSelectedPath={setSelectedPath} handleSubmit={handleSubmit} isSubmitting={isSubmitting} section={formSection} /> : null}
       </div>
     </section>
   );
