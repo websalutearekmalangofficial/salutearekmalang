@@ -21,6 +21,7 @@ import { Route as AuthenticatedAdminHalamanRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminMediaRouteImport } from './routes/_authenticated/admin/media'
 import { Route as AuthenticatedAdminNavigasiRouteImport } from './routes/_authenticated/admin/navigasi'
 import { Route as AuthenticatedAdminPendaftarRouteImport } from './routes/_authenticated/admin/pendaftar'
+import { Route as AuthenticatedAdminPengaturanRouteImport } from './routes/_authenticated/admin/pengaturan'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -84,6 +85,12 @@ const AuthenticatedAdminPendaftarRoute =
     path: '/pendaftar',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminPengaturanRoute =
+  AuthenticatedAdminPengaturanRouteImport.update({
+    id: '/pengaturan',
+    path: '/pengaturan',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/admin/media': typeof AuthenticatedAdminMediaRoute
   '/admin/navigasi': typeof AuthenticatedAdminNavigasiRoute
   '/admin/pendaftar': typeof AuthenticatedAdminPendaftarRoute
+  '/admin/pengaturan': typeof AuthenticatedAdminPengaturanRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesByTo {
@@ -108,6 +116,7 @@ export interface FileRoutesByTo {
   '/admin/media': typeof AuthenticatedAdminMediaRoute
   '/admin/navigasi': typeof AuthenticatedAdminNavigasiRoute
   '/admin/pendaftar': typeof AuthenticatedAdminPendaftarRoute
+  '/admin/pengaturan': typeof AuthenticatedAdminPengaturanRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesById {
@@ -123,6 +132,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/media': typeof AuthenticatedAdminMediaRoute
   '/_authenticated/admin/navigasi': typeof AuthenticatedAdminNavigasiRoute
   '/_authenticated/admin/pendaftar': typeof AuthenticatedAdminPendaftarRoute
+  '/_authenticated/admin/pengaturan': typeof AuthenticatedAdminPengaturanRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRouteTypes {
@@ -138,6 +148,7 @@ export interface FileRouteTypes {
     | '/admin/media'
     | '/admin/navigasi'
     | '/admin/pendaftar'
+    | '/admin/pengaturan'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -150,6 +161,7 @@ export interface FileRouteTypes {
     | '/admin/media'
     | '/admin/navigasi'
     | '/admin/pendaftar'
+    | '/admin/pengaturan'
     | '/admin'
   id:
     | '__root__'
@@ -164,6 +176,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/media'
     | '/_authenticated/admin/navigasi'
     | '/_authenticated/admin/pendaftar'
+    | '/_authenticated/admin/pengaturan'
     | '/_authenticated/admin/'
   fileRoutesById: FileRoutesById
 }
@@ -261,6 +274,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPendaftarRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/pengaturan': {
+      id: '/_authenticated/admin/pengaturan'
+      path: '/pengaturan'
+      fullPath: '/admin/pengaturan'
+      preLoaderRoute: typeof AuthenticatedAdminPengaturanRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
 
@@ -269,6 +289,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminMediaRoute: typeof AuthenticatedAdminMediaRoute
   AuthenticatedAdminNavigasiRoute: typeof AuthenticatedAdminNavigasiRoute
   AuthenticatedAdminPendaftarRoute: typeof AuthenticatedAdminPendaftarRoute
+  AuthenticatedAdminPengaturanRoute: typeof AuthenticatedAdminPengaturanRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
@@ -277,6 +298,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminMediaRoute: AuthenticatedAdminMediaRoute,
   AuthenticatedAdminNavigasiRoute: AuthenticatedAdminNavigasiRoute,
   AuthenticatedAdminPendaftarRoute: AuthenticatedAdminPendaftarRoute,
+  AuthenticatedAdminPengaturanRoute: AuthenticatedAdminPengaturanRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
 
