@@ -104,7 +104,8 @@ function Index() {
     event.preventDefault();
     if (isSubmitting) return;
 
-    const formData = new FormData(event.currentTarget);
+    const form = event.currentTarget;
+    const formData = new FormData(form);
     const nama = String(formData.get("nama") || "").trim();
     const sekolah = String(formData.get("sekolah") || "").trim();
     const kota = String(formData.get("kota") || "").trim();
@@ -122,12 +123,13 @@ function Index() {
 
     setIsSubmitting(true);
     const controller = new AbortController();
-    const timeoutId = window.setTimeout(() => controller.abort(), 10000);
+    const timeoutId = window.setTimeout(() => controller.abort(), 15000);
 
     try {
       const { data: sessionData } = await supabase.auth.getSession();
       const currentUser = sessionData?.session?.user ?? null;
-      const { data: registration, error } = await supabase
+      // Visitors cannot read registrations back (RLS), so insert without returning rows.
+      const { error } = await supabase
         .from("registrations")
         .insert({
           nama,
@@ -138,24 +140,17 @@ function Index() {
           jalur: selectedPath,
           user_id: currentUser?.id ?? null,
         })
-        .select("id")
-        .single();
+        .abortSignal(controller.signal);
 
-      if (error || !registration) {
-        console.error("[registration] insert failed", error?.message);
+      if (error) {
+        console.error("[registration] insert failed", error.message);
         toast.error("Pendaftaran gagal dikirim. Silakan coba lagi.");
         return;
       }
 
       setIsSuccessDialogOpen(true);
-      event.currentTarget.reset();
+      form.reset();
       setSelectedPath("Pilih Jalur Pendaftaran");
-
-      void supabase.functions
-        .invoke("send-whatsapp-registration", { body: { registration_id: registration.id, mode: "auto" } })
-        .then(({ error: whatsappError }) => {
-          if (whatsappError) console.warn("[registration] WhatsApp auto-reply failed:", whatsappError.message);
-        });
     } catch (error) {
       console.error("[registration] submit failed", error);
       toast.error(error instanceof DOMException && error.name === "AbortError"

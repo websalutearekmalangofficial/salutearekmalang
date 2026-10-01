@@ -244,8 +244,8 @@ function SettingsAdmin() {
   });
 
   const activeTemplates = (templatesQuery.data ?? []).filter((template) => template.is_active);
-  const defaultTemplateId = settingMap.whatsapp_default_template_id ?? "";
-  const whatsappEnabled = settingMap.whatsapp_enabled !== "false";
+  const defaultTemplateId = settingMap["whatsapp_default_template_id"] ?? "";
+  const whatsappEnabled = settingMap["whatsapp_enabled"] !== "false";
 
   return (
     <>
