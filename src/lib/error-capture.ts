@@ -53,7 +53,26 @@ function isErrorLike(value: unknown): value is Error {
 // unhandled-error logging, which this file cannot hook directly — are both
 // recorded for consumeLastCapturedError and expanded before serialization.
 const originalConsoleError = console.error.bind(console);
+
+// A browser closing the connection mid-request (navigation, refresh, server restart)
+// surfaces as Node's "Error: aborted". It is not an app failure, so don't report it.
+function isClientAbort(value: unknown): boolean {
+  let current: unknown = value;
+  for (let depth = 0; depth < CAUSE_DEPTH_LIMIT && current instanceof Error; depth++) {
+    const code = (current as { code?: unknown }).code;
+    if (current.message === "aborted" || code === "ECONNRESET" || code === "ERR_STREAM_PREMATURE_CLOSE") {
+      return true;
+    }
+    current = current.cause;
+  }
+  return false;
+}
+
 console.error = (...args: unknown[]) => {
+  if (args.some(isClientAbort)) {
+    console.warn("[server] request aborted by client");
+    return;
+  }
   const expanded = args.map((arg) => {
     if (!isErrorLike(arg)) return arg;
     record(arg);
