@@ -81,6 +81,19 @@ console.error = (...args: unknown[]) => {
   originalConsoleError(...expanded);
 };
 
+// Node surfaces a client disconnect as an uncaughtException from node:_http_server,
+// printed straight to stderr — console.error above never sees it. Handle it at the
+// process level so it neither crashes the dev server nor shows up as a runtime error.
+if (typeof process !== "undefined" && typeof process.on === "function") {
+  process.on("uncaughtException", (error) => {
+    if (isClientAbort(error)) {
+      console.warn("[server] request aborted by client");
+      return;
+    }
+    console.error(error);
+  });
+}
+
 if (typeof globalThis.addEventListener === "function") {
   globalThis.addEventListener("error", (event) => record((event as ErrorEvent).error ?? event));
   globalThis.addEventListener("unhandledrejection", (event) =>
