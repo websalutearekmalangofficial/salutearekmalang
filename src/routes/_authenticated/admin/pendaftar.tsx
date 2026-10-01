@@ -143,8 +143,8 @@ function RegistrationsAdmin() {
 
 
   const settings = settingsQuery.data ?? {};
-  const whatsappEnabled = settings.whatsapp_enabled !== "false";
-  const defaultTemplateId = settings.whatsapp_default_template_id ?? "";
+  const whatsappEnabled = settings["whatsapp_enabled"] !== "false";
+  const defaultTemplateId = settings["whatsapp_default_template_id"] ?? "";
 
   const openComposer = (row: RegistrationRow) => {
     setSelectedRegistration(row);
