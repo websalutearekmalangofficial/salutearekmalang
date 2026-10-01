@@ -1,4 +1,4 @@
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
 import {
   BookOpenCheck,
   Building2,
@@ -172,6 +172,7 @@ function Index() {
         handleSubmit={handleSubmit}
         isSubmitting={isSubmitting}
       />
+      <FlexibleStudySection />
       <RegistrationProcess section={sectionOf(content.sections, "process")} />
       <BenefitsSection section={sectionOf(content.sections, "benefits")} />
       <TestimonialsSection section={sectionOf(content.sections, "testimonials")} />
@@ -321,6 +322,43 @@ function RegistrationForm({
         </div>
       </form>
     </aside>
+  );
+}
+
+function FlexibleStudySection() {
+  const navigate = useNavigate();
+
+  return (
+    <section className="bg-background px-4 py-16 sm:px-6 md:px-12" aria-labelledby="flexible-study-heading">
+      <div className="mx-auto grid max-w-7xl items-center gap-10 md:grid-cols-2 md:gap-12 lg:gap-16">
+        <div className="flex flex-col items-start">
+          <h2
+            id="flexible-study-heading"
+            className="font-sans text-4xl font-black leading-[1.12] tracking-tight text-black md:text-5xl"
+          >
+            Kuliah Fleksibel, Raih Masa Depan Bersama SALUT Arek Malang
+          </h2>
+          <Button
+            type="button"
+            onClick={() => navigate({ to: "/daftar" })}
+            className="mt-8 rounded-full bg-ut-yellow px-7 py-3.5 text-base font-black text-black shadow-yellow transition-all duration-300 hover:-translate-y-0.5 hover:bg-ut-yellow/90 hover:shadow-lg"
+          >
+            Mulai Pendaftaran
+          </Button>
+        </div>
+
+        <div className="overflow-hidden rounded-2xl">
+          <img
+            src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=85"
+            alt="Sekelompok mahasiswa sedang belajar bersama"
+            width="1200"
+            height="800"
+            className="h-auto w-full object-cover"
+            loading="lazy"
+          />
+        </div>
+      </div>
+    </section>
   );
 }
 
