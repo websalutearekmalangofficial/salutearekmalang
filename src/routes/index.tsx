@@ -393,13 +393,74 @@ function BenefitsSection({ section }: { section?: Section | undefined }) {
 }
 
 function TestimonialsSection({ section }: { section?: Section | undefined }) {
-  const items = section?.items?.filter((item) => item.is_published) ?? [];
+  const testimonials = [
+    {
+      name: "ZARETHA UNGU ALEGRA",
+      role: "Mahasiswa Jurusan S1 Ilmu Komunikasi",
+      quote: "Gabung Salut jadi lebih mudah dapat banyak informasi soal perkuliahan dan ngerjain tugas",
+      image: "https://ui-avatars.com/api/?name=Zaretha+Ungu&background=f3f4f6&color=111240&size=256"
+    },
+    {
+      name: "Shanata Shakinah",
+      role: "Mahasiswa Jurusan S1 Administrasi Publik",
+      quote: "Gabung di Salut ternyata nggak cuma soal belajar, tapi juga dapat pelayanan maksimal",
+      image: "https://ui-avatars.com/api/?name=Shanata+Shakinah&background=f3f4f6&color=111240&size=256"
+    },
+    {
+      name: "Reysita Karina",
+      role: "Mahasiswa Jurusan S1 PGSD (Inservice)",
+      quote: "Kakak-kakak admin di Salute Malang ramah dan helpfull banget, dan selalu ngingetin kita kalo ada tugas",
+      image: "https://ui-avatars.com/api/?name=Reysita+Karina&background=f3f4f6&color=111240&size=256"
+    },
+    {
+      name: "Maulana Ekky Sahertian",
+      role: "Mahasiswa Jurusan S1 Administrasi Publik/Negara",
+      quote: "Bangga bisa jadi bagian dari Salute Malang! Semoga bisa terus belajar, berkembang, dan sukses",
+      image: "https://ui-avatars.com/api/?name=Maulana+Ekky&background=f3f4f6&color=111240&size=256"
+    },
+    {
+      name: "SYIHABUDDIN",
+      role: "Mahasiswa Jurusan S1 Ilmu Hukum",
+      quote: "Senang bisa punya kesempatan bergabung di Sentra Layanan UT Malang. Banyak pengalaman yang pastinya bakal berguna ke depannya.",
+      image: "https://ui-avatars.com/api/?name=Syihabuddin&background=f3f4f6&color=111240&size=256"
+    },
+    {
+      name: "RAFFI TIMOR ALI AKBAR",
+      role: "Mahasiswa Jurusan S1 Manajemen",
+      quote: "Pokoknya bersyukur banget bisa jadi bagian dari keluarga besar Salute Arek Malang!",
+      image: "https://ui-avatars.com/api/?name=Raffi+Timor&background=f3f4f6&color=111240&size=256"
+    }
+  ];
+
   return (
-    <section id="kontak" className="scroll-mt-20 bg-background px-4 py-12 sm:px-6 md:px-8 md:py-16 lg:px-12">
+    <section id="testimoni" className="scroll-mt-20 bg-[#111342] px-4 py-16 sm:px-6 md:px-8 lg:px-12">
       <div className="mx-auto max-w-7xl">
-        <h2 className="text-center font-display text-2xl font-black text-ut-navy sm:text-3xl md:text-4xl">{section?.title || "Apa Kata Mereka?"}</h2>
-        <div className="mt-8 grid gap-5 sm:grid-cols-2 md:mt-10 md:gap-6 lg:grid-cols-3">
-          {items.map((item) => <article key={item.id} className="flex h-full flex-col rounded-2xl border border-border bg-card p-5 shadow-testimonial transition duration-300 hover:-translate-y-1 hover:shadow-form sm:p-6"><Quote className="mb-3 size-8 fill-current text-ut-yellow sm:mb-4 sm:size-10" /><p className="flex-1 text-sm italic leading-relaxed text-testimonial">“{item.body || item.subtitle || ""}”</p><div className="mt-5 flex items-center gap-3 sm:mt-6"><div className="grid size-12 shrink-0 place-items-center rounded-full bg-avatar text-sm font-black text-ut-navy">{(item.title || "SL").split(/\s+/).map((x) => x[0]).join("").slice(0,2).toUpperCase()}</div><div className="min-w-0"><h3 className="truncate text-sm font-black text-ut-navy sm:text-base">{item.title}</h3>{item.subtitle ? <span className="mt-1 inline-flex rounded-full bg-status-blue px-3 py-1 text-xs font-black text-ut-blue">{item.subtitle}</span> : null}</div></div></article>)}
+        <h2 className="mb-12 text-center font-display text-3xl font-black text-white sm:text-4xl md:text-5xl">
+          {section?.title || "Apa Kata Mereka?"}
+        </h2>
+        
+        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+          {testimonials.map((item, index) => (
+            <article key={index} className="flex flex-col items-center text-center">
+              <div className="mb-5 flex aspect-[3/4] w-3/4 max-w-[160px] items-end overflow-hidden rounded-t-[100px] bg-white sm:w-full">
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="h-full w-full object-cover pt-2"
+                  loading="lazy"
+                />
+              </div>
+              <h3 className="mb-2 text-sm font-bold uppercase leading-tight text-white xl:text-base">
+                {item.name}
+              </h3>
+              <p className="mb-3 text-xs font-medium text-white/90">
+                {item.role}
+              </p>
+              <p className="text-xs italic leading-relaxed text-white/80">
+                "{item.quote}"
+              </p>
+            </article>
+          ))}
         </div>
       </div>
     </section>
